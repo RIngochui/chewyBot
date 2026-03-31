@@ -29,7 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. All secrets are read from .env via config.py — no hardcoded values anywhere in the codebase
   4. Database initializes all 8 tables on first run; all SQL lives exclusively in database/queries.py
   5. requirements.txt, .env.example, README.md, and both mock JSON files are present and usable
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 01-PLAN-A.md — Core infrastructure: config.py, utils/logger.py, database/db.py, database/queries.py
+- [ ] 01-PLAN-B.md — Pydantic models + stub services/adapters/utils: models/, services/, adapters/, utils/odds_math.py, utils/formatters.py
+- [ ] 01-PLAN-C.md — Bot entry point + cog stubs + mock data + deliverables: bot.py, cogs/, mock/, requirements.txt, .env.example, README.md
 
 ### Phase 2: Voice & Community Cogs
 **Goal**: Users can play music from YouTube, speak text-to-speech in voice channels, and proxy Nitro-free emoji — all three cogs fully functional
@@ -73,7 +77,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/? | Not started | - |
+| 1. Foundation | 0/3 | Not started | - |
 | 2. Voice & Community Cogs | 0/? | Not started | - |
 | 3. Arbitrage Scanner | 0/? | Not started | - |
 | 4. NBA Parlay AI | 0/? | Not started | - |
