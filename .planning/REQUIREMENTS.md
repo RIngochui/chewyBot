@@ -62,11 +62,11 @@
 
 ### Arbitrage Scanner Cog
 
-- [ ] **ARB-01**: Adapter pattern — adapters/base.py abstract interface with get_sports(), get_events(), get_odds() methods
-- [ ] **ARB-02**: adapters/odds_api.py implements base using The Odds API; reads ODDS_API_KEY from env
-- [ ] **ARB-03**: Books covered: fanduel, draftkings, betmgm, bet365
-- [ ] **ARB-04**: MOCK_MODE=true loads from mock/odds_api_sample.json instead of live API
-- [ ] **ARB-05**: API quota remaining tracked from response headers, exposed via /status command
+- [x] **ARB-01**: Adapter pattern — adapters/base.py abstract interface with get_sports(), get_events(), get_odds() methods
+- [x] **ARB-02**: adapters/odds_api.py implements base using The Odds API; reads ODDS_API_KEY from env
+- [x] **ARB-03**: Books covered: fanduel, draftkings, betmgm, bet365
+- [x] **ARB-04**: MOCK_MODE=true loads from mock/odds_api_sample.json instead of live API
+- [x] **ARB-05**: API quota remaining tracked from response headers, exposed via /status command
 - [ ] **ARB-06**: Odds normalized to canonical schema: sport, league, event_name, home_team, away_team, start_time, market_type, selection_name, line_value, decimal_odds, american_odds, book_name, fetched_at, event_id, market_key
 - [ ] **ARB-07**: event_id slugified as "{home_team}_{away_team}_{date}"; market_key as "{event_id}_{market_type}_{selection_name}"
 - [ ] **ARB-08**: Arb detection: sum(1/best_odds) < 1.0 → arb exists; calculates arb_pct, stake per side, estimated profit
@@ -184,11 +184,11 @@
 | EMO-03 | Phase 2 — Voice & Community Cogs | Complete |
 | EMO-04 | Phase 2 — Voice & Community Cogs | Complete |
 | EMO-05 | Phase 2 — Voice & Community Cogs | Complete |
-| ARB-01 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-02 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-03 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-04 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-05 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-01 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-02 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-03 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-04 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-05 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-06 | Phase 3 — Arbitrage Scanner | Pending |
 | ARB-07 | Phase 3 — Arbitrage Scanner | Pending |
 | ARB-08 | Phase 3 — Arbitrage Scanner | Pending |

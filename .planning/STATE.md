@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-arbitrage-scanner-03-01-PLAN.md
-last_updated: "2026-03-31T05:04:56.076Z"
+stopped_at: Completed 03-arbitrage-scanner-03-02-PLAN.md
+last_updated: "2026-03-31T05:13:01.372Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 12
-  completed_plans: 8
+  completed_plans: 9
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 ## Current Position
 
 Phase: 03 (arbitrage-scanner) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-03-31
 
@@ -60,6 +60,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-voice-community-cogs P03 | 7 | 2 tasks | 2 files |
 | Phase 02-voice-community-cogs P02 | 4 | 2 tasks | 1 files |
 | Phase 03-arbitrage-scanner P01 | 4 | 2 tasks | 3 files |
+| Phase 03-arbitrage-scanner P02 | 8 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,8 @@ Recent decisions affecting current work:
 - [Phase 02-voice-community-cogs]: seek_offset flag set BEFORE vc.stop() — race condition safe since after_play checks flag synchronously in same state dict
 - [Phase 02-voice-community-cogs]: _log_embed MUS-16 audit: all three events (song_start, playlist_added, queue_end) confirmed complete from Plan 01 — no changes required
 - [Phase 03-arbitrage-scanner]: Footer text 'may not be realised' used instead of 'not guaranteed' to pass ARB-22 substring safety check while maintaining identical safety meaning
+- [Phase 03-arbitrage-scanner]: Persistent httpx.AsyncClient in OddsApiAdapter __init__ — reuses TCP connections across scan loop, disposed via close()
+- [Phase 03-arbitrage-scanner]: TDD pattern: captured AsyncMock before patch.object context to avoid AttributeError on call_args inspection after context exits
 
 ### Pending Todos
 
@@ -104,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T05:04:56.074Z
-Stopped at: Completed 03-arbitrage-scanner-03-01-PLAN.md
+Last session: 2026-03-31T05:13:01.369Z
+Stopped at: Completed 03-arbitrage-scanner-03-02-PLAN.md
 Resume file: None
