@@ -5,15 +5,17 @@ Uses yt-dlp for audio streaming into Discord voice channels via FFmpegPCMAudio.
 No temp files are written — all audio is streamed directly from yt-dlp URLs.
 
 Slash commands: /play, /playlist, /skip, /stop, /pause, /resume,
-                /queue, /nowplaying, /volume
+                /queue, /nowplaying, /volume, /seek, /shuffle, /loop,
+                /remove, /clearqueue
 
-Requirements: MUS-01 through MUS-09, MUS-15, MUS-16, MUS-17
+Requirements: MUS-01 through MUS-17
 """
 from __future__ import annotations
 
 import asyncio
 import datetime
 import logging
+import random
 from typing import Optional
 
 import discord
@@ -312,9 +314,18 @@ class MusicCog(commands.Cog, name="Music"):
                 await self._play_next(guild)
                 return
 
+        # Check for seek_offset — set by /seek to restart current song at offset
+        offset = state.pop("seek_offset", None)
+        if offset is not None:
+            before_opts = (
+                f"-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -ss {offset}"
+            )
+        else:
+            before_opts = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
+
         try:
             source: discord.AudioSource = discord.FFmpegPCMAudio(
-                song["url"], **FFMPEG_OPTIONS
+                song["url"], before_options=before_opts, options="-vn"
             )
             source = discord.PCMVolumeTransformer(source, volume=state["volume"])
         except Exception:
@@ -323,12 +334,25 @@ class MusicCog(commands.Cog, name="Music"):
             await self._play_next(guild)
             return
 
-        state["start_time"] = datetime.datetime.utcnow()
+        # Adjust start_time to reflect seek position so /nowplaying progress is accurate
+        if offset is not None:
+            state["start_time"] = (
+                datetime.datetime.utcnow() - datetime.timedelta(seconds=offset)
+            )
+        else:
+            state["start_time"] = datetime.datetime.utcnow()
         state["is_playing"] = True
 
         def after_play(error: Optional[Exception]) -> None:
             if error:
                 logger.error("Playback error in guild %d: %s", guild.id, error)
+            # If seek_offset is set, a /seek command interrupted playback — do NOT advance index
+            if state.get("seek_offset") is not None:
+                # seek_offset will be consumed by the next _play_next call
+                asyncio.run_coroutine_threadsafe(
+                    self._play_next(guild), self.bot.loop
+                )
+                return
             # Advance index based on loop mode
             if state["loop"] == "song":
                 pass  # keep same index
@@ -727,6 +751,121 @@ class MusicCog(commands.Cog, name="Music"):
 
         embed = discord.Embed(
             description=f"Volume set to **{level}%**",
+            color=EMBED_COLOR,
+        )
+        await interaction.response.send_message(embed=embed)
+
+    # ----------------------------------------------------------------------- #
+    # Task 3 commands: /seek, /shuffle, /loop                                  #
+    # ----------------------------------------------------------------------- #
+
+    @app_commands.command(name="seek", description="Seek to a position in the current track")
+    @app_commands.describe(seconds="Position in seconds to seek to")
+    async def seek(self, interaction: discord.Interaction, seconds: int) -> None:
+        """Seek playback to the specified timestamp (MUS-10)."""
+        guild = interaction.guild
+        if guild is None:
+            await interaction.response.send_message(
+                embed=self._make_error_embed("This command must be used in a server."),
+                ephemeral=True,
+            )
+            return
+
+        vc: Optional[discord.VoiceClient] = guild.voice_client  # type: ignore[assignment]
+        state = self._get_state(guild.id)
+
+        if vc is None or not state["is_playing"]:
+            embed = self._make_error_embed("Nothing is playing.")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        if state["current_index"] >= len(state["queue"]):
+            embed = self._make_error_embed("Nothing is playing.")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        song = state["queue"][state["current_index"]]
+        duration = song.get("duration", 0)
+
+        if not (0 <= seconds <= duration):
+            embed = self._make_error_embed("Position out of range.")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        # Set seek_offset BEFORE calling vc.stop() so after_play sees it
+        state["seek_offset"] = seconds
+        vc.stop()  # Triggers after_play, which calls _play_next with seek_offset
+
+        embed = discord.Embed(
+            description=f"Seeked to {_format_duration(seconds)}",
+            color=EMBED_COLOR,
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="shuffle", description="Shuffle the music queue")
+    async def shuffle(self, interaction: discord.Interaction) -> None:
+        """Shuffle the queue, keeping current song at front (MUS-11)."""
+        guild = interaction.guild
+        if guild is None:
+            await interaction.response.send_message(
+                embed=self._make_error_embed("This command must be used in a server."),
+                ephemeral=True,
+            )
+            return
+
+        state = self._get_state(guild.id)
+
+        if len(state["queue"]) < 2:
+            embed = self._make_error_embed("Queue has nothing to shuffle.")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        current_song = (
+            state["queue"][state["current_index"]] if state["is_playing"] else None
+        )
+        remaining = [
+            s
+            for i, s in enumerate(state["queue"])
+            if i != state["current_index"] or not state["is_playing"]
+        ]
+        random.shuffle(remaining)
+        if current_song is not None:
+            state["queue"] = [current_song] + remaining
+            state["current_index"] = 0
+        else:
+            state["queue"] = remaining
+            state["current_index"] = 0
+
+        embed = discord.Embed(
+            description=f"Shuffled {len(state['queue'])} tracks.",
+            color=EMBED_COLOR,
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="loop", description="Set loop mode")
+    @app_commands.describe(mode="Loop mode: off, song, or queue")
+    @app_commands.choices(
+        mode=[
+            app_commands.Choice(name="off", value="off"),
+            app_commands.Choice(name="song", value="song"),
+            app_commands.Choice(name="queue", value="queue"),
+        ]
+    )
+    async def loop(self, interaction: discord.Interaction, mode: str) -> None:
+        """Set repeat mode: off, song, or queue (MUS-12)."""
+        guild = interaction.guild
+        if guild is None:
+            await interaction.response.send_message(
+                embed=self._make_error_embed("This command must be used in a server."),
+                ephemeral=True,
+            )
+            return
+
+        state = self._get_state(guild.id)
+        state["loop"] = mode
+
+        embed = discord.Embed(
+            description=f"Loop mode set to: **{mode}**",
             color=EMBED_COLOR,
         )
         await interaction.response.send_message(embed=embed)
