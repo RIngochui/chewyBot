@@ -24,41 +24,41 @@
 
 ### Music Cog
 
-- [ ] **MUS-01**: /play [query or URL] — searches YouTube or plays direct URL; bot joins user's voice channel
-- [ ] **MUS-02**: /playlist [url] — loads a YouTube playlist into queue
-- [ ] **MUS-03**: /skip — skips current song
-- [ ] **MUS-04**: /stop — stops playback, clears queue, bot leaves voice channel
-- [ ] **MUS-05**: /pause — pauses playback
-- [ ] **MUS-06**: /resume — resumes playback
-- [ ] **MUS-07**: /queue — shows current queue as paginated embed (10 songs per page)
-- [ ] **MUS-08**: /nowplaying — shows current song with title, thumbnail, duration, and text progress bar
-- [ ] **MUS-09**: /volume [0-100] — sets playback volume
+- [x] **MUS-01**: /play [query or URL] — searches YouTube or plays direct URL; bot joins user's voice channel
+- [x] **MUS-02**: /playlist [url] — loads a YouTube playlist into queue
+- [x] **MUS-03**: /skip — skips current song
+- [x] **MUS-04**: /stop — stops playback, clears queue, bot leaves voice channel
+- [x] **MUS-05**: /pause — pauses playback
+- [x] **MUS-06**: /resume — resumes playback
+- [x] **MUS-07**: /queue — shows current queue as paginated embed (10 songs per page)
+- [x] **MUS-08**: /nowplaying — shows current song with title, thumbnail, duration, and text progress bar
+- [x] **MUS-09**: /volume [0-100] — sets playback volume
 - [ ] **MUS-10**: /seek [seconds] — seeks to timestamp in current track
 - [ ] **MUS-11**: /shuffle — shuffles the queue
 - [ ] **MUS-12**: /loop [off/song/queue] — sets repeat mode
 - [ ] **MUS-13**: /remove [position] — removes song at queue position
 - [ ] **MUS-14**: /clearqueue — clears entire queue
-- [ ] **MUS-15**: Bot auto-leaves when voice channel is empty
+- [x] **MUS-15**: Bot auto-leaves when voice channel is empty
 - [ ] **MUS-16**: Embeds posted to LOG_CHANNEL_ID on: song start (title, URL, thumbnail, duration, requested by), playlist added (name, count, first thumbnail), queue end
-- [ ] **MUS-17**: Uses yt-dlp + discord.py voice client (no discord-music-player)
+- [x] **MUS-17**: Uses yt-dlp + discord.py voice client (no discord-music-player)
 
 ### TTS Cog
 
-- [ ] **TTS-01**: /tts [text] — converts text to speech via gTTS, plays in user's current voice channel
-- [ ] **TTS-02**: /tts_lang [language_code] — sets preferred TTS language (default: en)
-- [ ] **TTS-03**: /tts_stop — stops current TTS playback
-- [ ] **TTS-04**: Audio generated to temp file, played, deleted after playback
-- [ ] **TTS-05**: TTS_INTERRUPTS_MUSIC env var controls whether TTS queues after current song or interrupts
-- [ ] **TTS-06**: TTS_MAX_CHARS env var enforces max character limit (default: 300)
-- [ ] **TTS-07**: Error returned if user is not in a voice channel
+- [x] **TTS-01**: /tts [text] — converts text to speech via gTTS, plays in user's current voice channel
+- [x] **TTS-02**: /tts_lang [language_code] — sets preferred TTS language (default: en)
+- [x] **TTS-03**: /tts_stop — stops current TTS playback
+- [x] **TTS-04**: Audio generated to temp file, played, deleted after playback
+- [x] **TTS-05**: TTS_INTERRUPTS_MUSIC env var controls whether TTS queues after current song or interrupts
+- [x] **TTS-06**: TTS_MAX_CHARS env var enforces max character limit (default: 300)
+- [x] **TTS-07**: Error returned if user is not in a voice channel
 
 ### Emoji Proxy Cog
 
-- [ ] **EMO-01**: /emote [name] — bot reposts as clean "[Username]: <emoji>" message; slash command invocation deleted
-- [ ] **EMO-02**: /add_emote [name] [image_url] — downloads image, validates <256KB and PNG/JPG/GIF format, uploads as custom server emoji; requires Manage Emojis permission
-- [ ] **EMO-03**: /remove_emote [name] — removes custom emoji from server; requires Manage Emojis permission
-- [ ] **EMO-04**: /list_emotes — paginated embed with emoji previews
-- [ ] **EMO-05**: Graceful name conflict errors; suggests closest match if emoji not found
+- [x] **EMO-01**: /emote [name] — bot reposts as clean "[Username]: <emoji>" message; slash command invocation deleted
+- [x] **EMO-02**: /add_emote [name] [image_url] — downloads image, validates <256KB and PNG/JPG/GIF format, uploads as custom server emoji; requires Manage Emojis permission
+- [x] **EMO-03**: /remove_emote [name] — removes custom emoji from server; requires Manage Emojis permission
+- [x] **EMO-04**: /list_emotes — paginated embed with emoji previews
+- [x] **EMO-05**: Graceful name conflict errors; suggests closest match if emoji not found
 
 ### Arbitrage Scanner Cog
 
@@ -155,35 +155,35 @@
 | DEL-03 | Phase 1 — Foundation | Complete |
 | DEL-04 | Phase 1 — Foundation | Complete |
 | DEL-05 | Phase 1 — Foundation | Complete |
-| MUS-01 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-02 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-03 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-04 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-05 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-06 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-07 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-08 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-09 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-01 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-02 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-03 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-04 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-05 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-06 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-07 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-08 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-09 | Phase 2 — Voice & Community Cogs | Complete |
 | MUS-10 | Phase 2 — Voice & Community Cogs | Pending |
 | MUS-11 | Phase 2 — Voice & Community Cogs | Pending |
 | MUS-12 | Phase 2 — Voice & Community Cogs | Pending |
 | MUS-13 | Phase 2 — Voice & Community Cogs | Pending |
 | MUS-14 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-15 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-15 | Phase 2 — Voice & Community Cogs | Complete |
 | MUS-16 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-17 | Phase 2 — Voice & Community Cogs | Pending |
-| TTS-01 | Phase 2 — Voice & Community Cogs | Pending |
-| TTS-02 | Phase 2 — Voice & Community Cogs | Pending |
-| TTS-03 | Phase 2 — Voice & Community Cogs | Pending |
-| TTS-04 | Phase 2 — Voice & Community Cogs | Pending |
-| TTS-05 | Phase 2 — Voice & Community Cogs | Pending |
-| TTS-06 | Phase 2 — Voice & Community Cogs | Pending |
-| TTS-07 | Phase 2 — Voice & Community Cogs | Pending |
-| EMO-01 | Phase 2 — Voice & Community Cogs | Pending |
-| EMO-02 | Phase 2 — Voice & Community Cogs | Pending |
-| EMO-03 | Phase 2 — Voice & Community Cogs | Pending |
-| EMO-04 | Phase 2 — Voice & Community Cogs | Pending |
-| EMO-05 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-17 | Phase 2 — Voice & Community Cogs | Complete |
+| TTS-01 | Phase 2 — Voice & Community Cogs | Complete |
+| TTS-02 | Phase 2 — Voice & Community Cogs | Complete |
+| TTS-03 | Phase 2 — Voice & Community Cogs | Complete |
+| TTS-04 | Phase 2 — Voice & Community Cogs | Complete |
+| TTS-05 | Phase 2 — Voice & Community Cogs | Complete |
+| TTS-06 | Phase 2 — Voice & Community Cogs | Complete |
+| TTS-07 | Phase 2 — Voice & Community Cogs | Complete |
+| EMO-01 | Phase 2 — Voice & Community Cogs | Complete |
+| EMO-02 | Phase 2 — Voice & Community Cogs | Complete |
+| EMO-03 | Phase 2 — Voice & Community Cogs | Complete |
+| EMO-04 | Phase 2 — Voice & Community Cogs | Complete |
+| EMO-05 | Phase 2 — Voice & Community Cogs | Complete |
 | ARB-01 | Phase 3 — Arbitrage Scanner | Pending |
 | ARB-02 | Phase 3 — Arbitrage Scanner | Pending |
 | ARB-03 | Phase 3 — Arbitrage Scanner | Pending |
