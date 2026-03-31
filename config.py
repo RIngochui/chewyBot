@@ -44,7 +44,7 @@ class Config(BaseSettings):
     MIN_ARB_PCT: float = 0.5
     MIN_EV_PCT: float = 2.0
     MIN_LEG_SCORE: float = 0.5
-    SCAN_INTERVAL_SECONDS: int = 60
+    SCAN_INTERVAL_SECONDS: int = 300
     PARLAY_POST_TIME: str = "11:00"
     PARLAY_LEARNING_RATE: float = 0.05
     TTS_INTERRUPTS_MUSIC: bool = False
