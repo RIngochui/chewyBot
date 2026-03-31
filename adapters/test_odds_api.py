@@ -155,12 +155,14 @@ async def test_live_get_odds_calls_correct_url(live_adapter):
     mock_response.status_code = 200
     mock_response.headers = {"x-requests-remaining": "480"}
     mock_response.json.return_value = [{"id": "evt1", "bookmakers": []}]
+    mock_response.raise_for_status = MagicMock()
 
-    with patch.object(live_adapter._client, "get", new=AsyncMock(return_value=mock_response)):
+    get_mock = AsyncMock(return_value=mock_response)
+    with patch.object(live_adapter._client, "get", new=get_mock):
         result = await live_adapter.get_odds("basketball_nba", ["us"], ["h2h"])
 
-    live_adapter._client.get.assert_called_once()
-    call_args = live_adapter._client.get.call_args
+    get_mock.assert_called_once()
+    call_args = get_mock.call_args
     url = call_args[0][0] if call_args[0] else call_args.args[0]
     assert "basketball_nba" in url
     assert "the-odds-api.com" in url
@@ -175,10 +177,11 @@ async def test_live_get_odds_sends_api_key(live_adapter):
     mock_response.json.return_value = []
     mock_response.raise_for_status = MagicMock()
 
-    with patch.object(live_adapter._client, "get", new=AsyncMock(return_value=mock_response)):
+    get_mock = AsyncMock(return_value=mock_response)
+    with patch.object(live_adapter._client, "get", new=get_mock):
         await live_adapter.get_odds("basketball_nba", ["us"], ["h2h"])
 
-    call_kwargs = live_adapter._client.get.call_args.kwargs
+    call_kwargs = get_mock.call_args.kwargs
     params = call_kwargs.get("params", {})
     assert "apiKey" in params
     assert params["apiKey"] == "test_live_key"
@@ -193,10 +196,11 @@ async def test_live_get_odds_sends_supported_books(live_adapter):
     mock_response.json.return_value = []
     mock_response.raise_for_status = MagicMock()
 
-    with patch.object(live_adapter._client, "get", new=AsyncMock(return_value=mock_response)):
+    get_mock = AsyncMock(return_value=mock_response)
+    with patch.object(live_adapter._client, "get", new=get_mock):
         await live_adapter.get_odds("basketball_nba", ["us"], ["h2h"])
 
-    call_kwargs = live_adapter._client.get.call_args.kwargs
+    call_kwargs = get_mock.call_args.kwargs
     params = call_kwargs.get("params", {})
     bookmakers_param = params.get("bookmakers", "")
     for book in OddsApiAdapter.SUPPORTED_BOOKS:
@@ -330,12 +334,13 @@ async def test_live_get_sports_calls_api(live_adapter):
     mock_response.json.return_value = [{"key": "basketball_nba", "title": "NBA"}]
     mock_response.raise_for_status = MagicMock()
 
-    with patch.object(live_adapter._client, "get", new=AsyncMock(return_value=mock_response)):
+    get_mock = AsyncMock(return_value=mock_response)
+    with patch.object(live_adapter._client, "get", new=get_mock):
         result = await live_adapter.get_sports()
 
     assert isinstance(result, list)
     assert result[0]["key"] == "basketball_nba"
-    url = live_adapter._client.get.call_args[0][0]
+    url = get_mock.call_args[0][0]
     assert "/sports" in url
 
 
@@ -348,11 +353,12 @@ async def test_live_get_events_calls_api(live_adapter):
     mock_response.json.return_value = [{"id": "evt1"}]
     mock_response.raise_for_status = MagicMock()
 
-    with patch.object(live_adapter._client, "get", new=AsyncMock(return_value=mock_response)):
+    get_mock = AsyncMock(return_value=mock_response)
+    with patch.object(live_adapter._client, "get", new=get_mock):
         result = await live_adapter.get_events("basketball_nba")
 
     assert isinstance(result, list)
-    url = live_adapter._client.get.call_args[0][0]
+    url = get_mock.call_args[0][0]
     assert "basketball_nba" in url
     assert "events" in url
 
