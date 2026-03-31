@@ -871,6 +871,78 @@ class MusicCog(commands.Cog, name="Music"):
         await interaction.response.send_message(embed=embed)
 
     # ----------------------------------------------------------------------- #
+    # Task 4 commands: /remove, /clearqueue                                    #
+    # ----------------------------------------------------------------------- #
+
+    @app_commands.command(name="remove", description="Remove a song from the queue by position")
+    @app_commands.describe(position="1-based queue position to remove")
+    async def remove(self, interaction: discord.Interaction, position: int) -> None:
+        """Remove a track at the given 1-based position from the queue (MUS-13)."""
+        guild = interaction.guild
+        if guild is None:
+            await interaction.response.send_message(
+                embed=self._make_error_embed("This command must be used in a server."),
+                ephemeral=True,
+            )
+            return
+
+        state = self._get_state(guild.id)
+
+        if not (1 <= position <= len(state["queue"])):
+            embed = self._make_error_embed("Invalid position.")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        idx = position - 1  # convert 1-based to 0-based
+
+        if idx == state["current_index"] and state["is_playing"]:
+            embed = self._make_error_embed(
+                "Cannot remove the currently playing track. Use /skip instead."
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        removed = state["queue"].pop(idx)
+        # Shift current_index down if the removed item was before the current song
+        if idx < state["current_index"]:
+            state["current_index"] -= 1
+
+        embed = discord.Embed(
+            description=f"Removed: **{removed['title']}**",
+            color=EMBED_COLOR,
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="clearqueue", description="Clear all songs from the queue")
+    async def clearqueue(self, interaction: discord.Interaction) -> None:
+        """Clear the queue, preserving the currently-playing track (MUS-14)."""
+        guild = interaction.guild
+        if guild is None:
+            await interaction.response.send_message(
+                embed=self._make_error_embed("This command must be used in a server."),
+                ephemeral=True,
+            )
+            return
+
+        state = self._get_state(guild.id)
+        count = len(state["queue"])
+
+        if state["is_playing"] and state["current_index"] < len(state["queue"]):
+            # Preserve the currently playing song
+            current = state["queue"][state["current_index"]]
+            state["queue"] = [current]
+            state["current_index"] = 0
+        else:
+            state["queue"] = []
+            state["current_index"] = 0
+
+        embed = discord.Embed(
+            description=f"Cleared {count} songs from queue.",
+            color=EMBED_COLOR,
+        )
+        await interaction.response.send_message(embed=embed)
+
+    # ----------------------------------------------------------------------- #
     # Event handlers                                                            #
     # ----------------------------------------------------------------------- #
 
