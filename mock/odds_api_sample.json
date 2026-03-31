@@ -1,0 +1,329 @@
+[
+  {
+    "id": "nba_lakers_warriors_20260401",
+    "sport_key": "basketball_nba",
+    "sport_title": "NBA",
+    "commence_time": "2026-04-01T02:00:00Z",
+    "home_team": "Golden State Warriors",
+    "away_team": "Los Angeles Lakers",
+    "fetched_at": "2026-03-30T18:00:00Z",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Los Angeles Lakers", "price": 2.20},
+              {"name": "Golden State Warriors", "price": 1.75}
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Los Angeles Lakers", "price": 1.91, "point": 3.5},
+              {"name": "Golden State Warriors", "price": 1.91, "point": -3.5}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Los Angeles Lakers", "price": 1.65},
+              {"name": "Golden State Warriors", "price": 2.25}
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Over", "price": 1.91, "point": 228.5},
+              {"name": "Under", "price": 1.91, "point": 228.5}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betmgm",
+        "title": "BetMGM",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Los Angeles Lakers", "price": 2.10},
+              {"name": "Golden State Warriors", "price": 1.80}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "bet365",
+        "title": "Bet365",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Los Angeles Lakers", "price": 2.05},
+              {"name": "Golden State Warriors", "price": 1.83}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nba_celtics_heat_20260401",
+    "sport_key": "basketball_nba",
+    "sport_title": "NBA",
+    "commence_time": "2026-04-01T00:00:00Z",
+    "home_team": "Miami Heat",
+    "away_team": "Boston Celtics",
+    "fetched_at": "2026-03-30T18:00:00Z",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Boston Celtics", "price": 1.55},
+              {"name": "Miami Heat", "price": 2.55}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Boston Celtics", "price": 1.50},
+              {"name": "Miami Heat", "price": 2.60}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nfl_chiefs_bills_20260402",
+    "sport_key": "americanfootball_nfl",
+    "sport_title": "NFL",
+    "commence_time": "2026-04-02T20:00:00Z",
+    "home_team": "Kansas City Chiefs",
+    "away_team": "Buffalo Bills",
+    "fetched_at": "2026-03-30T18:00:00Z",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Kansas City Chiefs", "price": 1.65},
+              {"name": "Buffalo Bills", "price": 2.30}
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Kansas City Chiefs", "price": 1.91, "point": -3.5},
+              {"name": "Buffalo Bills", "price": 1.91, "point": 3.5}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Kansas City Chiefs", "price": 1.67},
+              {"name": "Buffalo Bills", "price": 2.25}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betmgm",
+        "title": "BetMGM",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Kansas City Chiefs", "price": 1.62},
+              {"name": "Buffalo Bills", "price": 2.35}
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Over", "price": 1.91, "point": 47.5},
+              {"name": "Under", "price": 1.91, "point": 47.5}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "bet365",
+        "title": "Bet365",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Kansas City Chiefs", "price": 1.66},
+              {"name": "Buffalo Bills", "price": 2.28}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nhl_bruins_leafs_20260401",
+    "sport_key": "icehockey_nhl",
+    "sport_title": "NHL",
+    "commence_time": "2026-04-01T23:00:00Z",
+    "home_team": "Toronto Maple Leafs",
+    "away_team": "Boston Bruins",
+    "fetched_at": "2026-03-30T18:00:00Z",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Boston Bruins", "price": 2.10},
+              {"name": "Toronto Maple Leafs", "price": 1.85}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Boston Bruins", "price": 2.05},
+              {"name": "Toronto Maple Leafs", "price": 1.90}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betmgm",
+        "title": "BetMGM",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Boston Bruins", "price": 2.00},
+              {"name": "Toronto Maple Leafs", "price": 1.95}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "bet365",
+        "title": "Bet365",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "Boston Bruins", "price": 2.08},
+              {"name": "Toronto Maple Leafs", "price": 1.87}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nhl_rangers_pens_20260402",
+    "sport_key": "icehockey_nhl",
+    "sport_title": "NHL",
+    "commence_time": "2026-04-02T23:30:00Z",
+    "home_team": "Pittsburgh Penguins",
+    "away_team": "New York Rangers",
+    "fetched_at": "2026-03-30T18:00:00Z",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "New York Rangers", "price": 1.75},
+              {"name": "Pittsburgh Penguins", "price": 2.15}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2026-03-30T18:00:00Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-03-30T18:00:00Z",
+            "outcomes": [
+              {"name": "New York Rangers", "price": 1.72},
+              {"name": "Pittsburgh Penguins", "price": 2.20}
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

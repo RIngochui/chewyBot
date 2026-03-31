@@ -1,0 +1,29 @@
+# chewyBot dependencies
+# All versions pinned with == operator for reproducible installs.
+# Verified against published package versions as of 2026-03-30.
+#
+# Install: pip install -r requirements.txt
+# Requires: Python 3.11+
+
+# === Core Discord Framework ===
+discord.py==2.7.1           # Discord bot framework with slash commands (app_commands), async events, cog system
+
+# === Configuration ===
+pydantic-settings==2.13.1   # Typed settings from .env via pydantic v2 (official pydantic settings package)
+pydantic==2.11.3            # Data validation for API responses and cog models (required by pydantic-settings)
+python-dotenv==1.1.0        # Load .env file into os.environ (used by pydantic-settings env_file support)
+
+# === Database ===
+aiosqlite==0.22.1           # Async SQLite interface — non-blocking reads/writes, context manager support
+
+# === HTTP Client ===
+httpx==0.28.1               # Async HTTP client for The Odds API and balldontlie API (with retry support)
+
+# === Audio / TTS ===
+yt-dlp==2025.3.31           # YouTube-DL fork for audio streaming in voice channels (Phase 2)
+gTTS==2.5.3                 # Google Text-to-Speech audio generation to temp file (Phase 2)
+
+# === Utilities ===
+# Note: ffmpeg is a system dependency (not pip-installable).
+# Install with: brew install ffmpeg (macOS) or apt-get install ffmpeg (Linux)
+# Required for: yt-dlp audio processing and gTTS playback via discord.py FFmpegPCMAudio
