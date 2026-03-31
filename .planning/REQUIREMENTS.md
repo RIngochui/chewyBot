@@ -8,18 +8,18 @@
 ### Bot Foundation
 
 - [ ] **BOT-01**: Bot entry point (bot.py) loads all cogs independently — one cog failing never crashes others
-- [ ] **BOT-02**: config.py loads all secrets from .env via pydantic-settings and exposes a typed Config object
+- [x] **BOT-02**: config.py loads all secrets from .env via pydantic-settings and exposes a typed Config object
 - [ ] **BOT-03**: Bot displays status "chewyBot is online 🐾" on ready and posts "chewyBot has logged in!" to LOG_CHANNEL_ID
-- [ ] **BOT-04**: Logging writes to chewybot.log file AND Discord LOG_CHANNEL_ID using Python logging module
+- [x] **BOT-04**: Logging writes to chewybot.log file AND Discord LOG_CHANNEL_ID using Python logging module
 - [x] **BOT-05**: All embeds use a consistent color scheme across all cogs (not default blurple)
 - [x] **BOT-06**: Full type hints on every function throughout the codebase
 - [x] **BOT-07**: All external API calls use exponential backoff with max 3 retries
 
 ### Database
 
-- [ ] **DB-01**: SQLite storage layer with all SQL in database/queries.py — zero inline SQL anywhere else
-- [ ] **DB-02**: db.py connection manager has clear comment block showing exactly what to change to swap SQLite → PostgreSQL (connection string and driver import only)
-- [ ] **DB-03**: Tables created: odds_snapshots, normalized_odds, arb_signals, ev_signals, parlays, parlay_legs, leg_type_weights, bot_config
+- [x] **DB-01**: SQLite storage layer with all SQL in database/queries.py — zero inline SQL anywhere else
+- [x] **DB-02**: db.py connection manager has clear comment block showing exactly what to change to swap SQLite → PostgreSQL (connection string and driver import only)
+- [x] **DB-03**: Tables created: odds_snapshots, normalized_odds, arb_signals, ev_signals, parlays, parlay_legs, leg_type_weights, bot_config
 - [x] **DB-04**: Pydantic v2 models used for all API response parsing and data validation
 
 ### Music Cog
@@ -140,15 +140,15 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | BOT-01 | Phase 1 — Foundation | Pending |
-| BOT-02 | Phase 1 — Foundation | Pending |
+| BOT-02 | Phase 1 — Foundation | Complete |
 | BOT-03 | Phase 1 — Foundation | Pending |
-| BOT-04 | Phase 1 — Foundation | Pending |
+| BOT-04 | Phase 1 — Foundation | Complete |
 | BOT-05 | Phase 1 — Foundation | Complete |
 | BOT-06 | Phase 1 — Foundation | Complete |
 | BOT-07 | Phase 1 — Foundation | Complete |
-| DB-01 | Phase 1 — Foundation | Pending |
-| DB-02 | Phase 1 — Foundation | Pending |
-| DB-03 | Phase 1 — Foundation | Pending |
+| DB-01 | Phase 1 — Foundation | Complete |
+| DB-02 | Phase 1 — Foundation | Complete |
+| DB-03 | Phase 1 — Foundation | Complete |
 | DB-04 | Phase 1 — Foundation | Complete |
 | DEL-01 | Phase 1 — Foundation | Pending |
 | DEL-02 | Phase 1 — Foundation | Pending |
