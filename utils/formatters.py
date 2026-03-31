@@ -41,6 +41,15 @@ def build_arb_embed(signal: ArbSignal) -> discord.Embed:
     embed.add_field(
         name="Est. Profit", value=f"${signal.estimated_profit:.2f}", inline=True
     )
+    embed.add_field(
+        name="How to play this",
+        value=(
+            f"1. Go to **{signal.book_a}** → bet **${signal.stake_side_a:.2f}** on **{signal.selection_a}**\n"
+            f"2. Go to **{signal.book_b}** → bet **${signal.stake_side_b:.2f}** on **{signal.selection_b}**\n"
+            f"3. Either way, you pocket ~**${signal.estimated_profit:.2f}**"
+        ),
+        inline=False,
+    )
     embed.set_footer(
         text="Not financial advice. Results are estimated and may not be realised."
     )
@@ -74,6 +83,15 @@ def build_ev_embed(signal: EVSignal) -> discord.Embed:
         inline=True,
     )
     embed.add_field(name="EV %", value=f"{signal.ev_pct:.2f}%", inline=True)
+    embed.add_field(
+        name="How to play this",
+        value=(
+            f"1. Go to **{signal.book_name}** → bet on **{signal.selection_name}**\n"
+            f"2. The market is pricing this at {signal.decimal_odds:.3f} but fair odds suggest {1 / signal.fair_probability:.3f}\n"
+            f"3. Long-term edge: **+{signal.ev_pct:.1f}%** per dollar bet"
+        ),
+        inline=False,
+    )
     embed.set_footer(
         text="Not financial advice. Results are estimated and may not be realised."
     )
