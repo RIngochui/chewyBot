@@ -48,23 +48,23 @@ Reliably surface sports arbitrage and +EV opportunities to the Discord channel �
 - [ ] Bot status: "chewyBot is online 🐾" on ready; log channel message: "chewyBot has logged in!"
 - [ ] Consistent embed color scheme across all cogs (not default blurple)
 
-**Cog 1 — Music (cogs/music.py)**
-- [ ] yt-dlp + discord.py voice client (no discord-music-player)
-- [ ] Slash commands: /play, /playlist, /skip, /stop, /pause, /resume, /queue, /nowplaying, /volume, /seek, /shuffle, /loop, /remove, /clearqueue
-- [ ] Auto-leave when voice channel is empty
-- [ ] Log embeds to LOG_CHANNEL_ID on song start, playlist add, queue end
+**Cog 1 — Music (cogs/music.py)** (Validated in Phase 2: Voice & Community Cogs)
+- [x] yt-dlp + discord.py voice client (no discord-music-player)
+- [x] Slash commands: /play, /playlist, /skip, /stop, /pause, /resume, /queue, /nowplaying, /volume, /seek, /shuffle, /loop, /remove, /clearqueue
+- [x] Auto-leave when voice channel is empty
+- [x] Log embeds to LOG_CHANNEL_ID on song start, playlist add, queue end
 
-**Cog 2 — TTS (cogs/tts.py)**
-- [ ] gTTS generates audio to temp file, plays in voice channel, deletes after
-- [ ] Slash commands: /tts, /tts_lang, /tts_stop
-- [ ] TTS_INTERRUPTS_MUSIC env toggle; TTS_MAX_CHARS limit (default 300)
-- [ ] Error if user not in a voice channel
+**Cog 2 — TTS (cogs/tts.py)** (Validated in Phase 2: Voice & Community Cogs)
+- [x] gTTS generates audio to temp file, plays in voice channel, deletes after
+- [x] Slash commands: /tts, /tts_lang, /tts_stop
+- [x] TTS_INTERRUPTS_MUSIC env toggle; TTS_MAX_CHARS limit (default 300)
+- [x] Error if user not in a voice channel
 
-**Cog 3 — Emoji Proxy (cogs/emoji.py)**
-- [ ] /emote — bot reposts as clean "[Username]: <emoji>" message
-- [ ] /add_emote, /remove_emote — require Manage Emojis permission; validate <256KB, PNG/JPG/GIF
-- [ ] /list_emotes — paginated embed with previews
-- [ ] Graceful name conflict errors; suggest closest match if not found
+**Cog 3 — Emoji Proxy (cogs/emoji.py)** (Validated in Phase 2: Voice & Community Cogs)
+- [x] /emote — bot reposts as clean "[Username]: <emoji>" message
+- [x] /add_emote, /remove_emote — require Manage Emojis permission; validate <256KB, PNG/JPG/GIF
+- [x] /list_emotes — paginated embed with previews
+- [x] Graceful name conflict errors; suggest closest match if not found
 
 **Cog 4 — Arbitrage Scanner (cogs/arb.py)**
 - [ ] Adapter pattern: adapters/base.py abstract interface + adapters/odds_api.py implementation
@@ -127,7 +127,7 @@ Reliably surface sports arbitrage and +EV opportunities to the Discord channel �
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| yt-dlp over discord-music-player | More control, actively maintained, no wrapper dependency | — Pending Phase 2 |
+| yt-dlp over discord-music-player | More control, actively maintained, no wrapper dependency | Validated Phase 2 — FFmpegPCMAudio + yt-dlp streaming, 14 commands |
 | Raw SQL in queries.py over ORM | Explicit PostgreSQL swap path, no migration framework needed | Validated Phase 1 — queries.py enforced |
 | Adapter pattern for sportsbooks | Easy to add new books without touching scanner logic | Validated Phase 1 — base.py interface + OddsApiAdapter stub |
 | SQLite with swap comments over dual support | Simpler v1, clear migration path documented | Validated Phase 1 — 2-line swap documented in db.py |
@@ -151,4 +151,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-31 — Phase 1 Foundation complete*
+*Last updated: 2026-03-31 — Phase 2 Voice & Community Cogs complete*
