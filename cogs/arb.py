@@ -3,7 +3,7 @@ Sports arbitrage and +EV scanner cog for chewyBot.
 
 Uses adapter pattern (adapters/odds_api.py) to fetch odds from The Odds API.
 MOCK_MODE=true loads from mock/odds_api_sample.json instead of live API.
-Auto-scanner loop runs every SCAN_INTERVAL_SECONDS, posts alerts to ARB_CHANNEL_ID.
+Scans are triggered manually via /scan — no auto-polling loop.
 Slash commands: /ping, /scan, /latest_arbs, /latest_ev, /set_bankroll,
                 /set_min_arb, /set_min_ev, /toggle_sport, /status
 
@@ -18,7 +18,7 @@ from typing import Optional
 
 import discord
 from discord import app_commands
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 from adapters.odds_api import OddsApiAdapter
 from config import config, EMBED_COLOR
@@ -42,9 +42,8 @@ logger = logging.getLogger(__name__)
 class ArbCog(commands.Cog, name="Arbitrage"):
     """Arbitrage and +EV scanner cog — wires OddsApiAdapter into Discord.
 
-    Auto-scanner task starts in cog_load and fires every SCAN_INTERVAL_SECONDS.
-    In-memory dedup prevents re-alerting the same market unless arb_pct improves
-    by >0.2% (ARB-09).
+    Scans run on demand via /scan. In-memory dedup prevents re-alerting the
+    same market unless arb_pct improves by >0.2% (ARB-09).
     """
 
     def __init__(self, bot: commands.Bot) -> None:
@@ -62,31 +61,9 @@ class ArbCog(commands.Cog, name="Arbitrage"):
         self._seen: dict[str, float] = {}
         self._last_scan_at: Optional[datetime] = None
 
-    async def cog_load(self) -> None:
-        """Start the auto-scanner loop when the cog is loaded (ARB-12)."""
-        self.auto_scan.start()
-
     async def cog_unload(self) -> None:
-        """Cancel the auto-scanner loop and close the adapter on unload."""
-        self.auto_scan.cancel()
+        """Close the adapter on unload."""
         await self.adapter.close()
-
-    # ------------------------------------------------------------------ #
-    # Auto-scanner task (ARB-12)                                          #
-    # ------------------------------------------------------------------ #
-
-    @tasks.loop(seconds=config.SCAN_INTERVAL_SECONDS)
-    async def auto_scan(self) -> None:
-        """Periodic scan loop — catches all exceptions so it never stops (ARB-12)."""
-        try:
-            await self._run_scan()
-        except Exception:
-            logger.exception("auto_scan: unhandled error, continuing loop")
-
-    @auto_scan.before_loop
-    async def before_auto_scan(self) -> None:
-        """Wait until the bot is fully ready before the first scan fires."""
-        await self.bot.wait_until_ready()
 
     # ------------------------------------------------------------------ #
     # Core scan logic                                                      #
@@ -308,11 +285,6 @@ class ArbCog(commands.Cog, name="Arbitrage"):
         embed.add_field(
             name="API Quota Remaining",
             value=str(quota) if quota is not None else "Unknown (mock mode)",
-            inline=True,
-        )
-        embed.add_field(
-            name="Scanner Running",
-            value="Yes" if self.auto_scan.is_running() else "No",
             inline=True,
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
