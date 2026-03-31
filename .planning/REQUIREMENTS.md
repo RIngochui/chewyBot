@@ -67,8 +67,8 @@
 - [x] **ARB-03**: Books covered: fanduel, draftkings, betmgm, bet365
 - [x] **ARB-04**: MOCK_MODE=true loads from mock/odds_api_sample.json instead of live API
 - [x] **ARB-05**: API quota remaining tracked from response headers, exposed via /status command
-- [ ] **ARB-06**: Odds normalized to canonical schema: sport, league, event_name, home_team, away_team, start_time, market_type, selection_name, line_value, decimal_odds, american_odds, book_name, fetched_at, event_id, market_key
-- [ ] **ARB-07**: event_id slugified as "{home_team}_{away_team}_{date}"; market_key as "{event_id}_{market_type}_{selection_name}"
+- [x] **ARB-06**: Odds normalized to canonical schema: sport, league, event_name, home_team, away_team, start_time, market_type, selection_name, line_value, decimal_odds, american_odds, book_name, fetched_at, event_id, market_key
+- [x] **ARB-07**: event_id slugified as "{home_team}_{away_team}_{date}"; market_key as "{event_id}_{market_type}_{selection_name}"
 - [ ] **ARB-08**: Arb detection: sum(1/best_odds) < 1.0 → arb exists; calculates arb_pct, stake per side, estimated profit
 - [ ] **ARB-09**: MIN_ARB_PCT threshold filters noise (default 0.5%); deduplication skips re-alerting same market_key unless arb_pct improves by >0.2%
 - [ ] **ARB-10**: +EV detection: no_vig_probability() on consensus line; EV% = ((offered_decimal * fair_prob) - 1) * 100; MIN_EV_PCT threshold (default 2.0%)
@@ -189,8 +189,8 @@
 | ARB-03 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-04 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-05 | Phase 3 — Arbitrage Scanner | Complete |
-| ARB-06 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-07 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-06 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-07 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-08 | Phase 3 — Arbitrage Scanner | Pending |
 | ARB-09 | Phase 3 — Arbitrage Scanner | Pending |
 | ARB-10 | Phase 3 — Arbitrage Scanner | Pending |

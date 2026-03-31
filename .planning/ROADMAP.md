@@ -66,7 +66,7 @@ Plans:
 Plans:
 - [x] 03-01-PLAN.md — odds_math.py + formatters.py: four math helpers and two Discord embed builders
 - [x] 03-02-PLAN.md — adapters/odds_api.py: mock mode, live API with per-sport backoff, quota tracking
-- [ ] 03-03-PLAN.md — services/odds_normalizer.py: raw dict to NormalizedOdds canonical schema
+- [x] 03-03-PLAN.md — services/odds_normalizer.py: raw dict to NormalizedOdds canonical schema
 - [ ] 03-04-PLAN.md — services/arb_detector.py + queries.py signal SQL: arb/EV detection and DB persistence layer
 - [ ] 03-05-PLAN.md — cogs/arb.py: ArbCog with auto-scanner loop, dedup, 9 slash commands
 
@@ -90,5 +90,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete   | 2026-03-31 |
 | 2. Voice & Community Cogs | 3/4 | In Progress|  |
-| 3. Arbitrage Scanner | 2/5 | In Progress|  |
+| 3. Arbitrage Scanner | 3/5 | In Progress|  |
 | 4. NBA Parlay AI | 0/? | Not started | - |
