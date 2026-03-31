@@ -95,7 +95,7 @@ Your log channel will receive `chewyBot has logged in!` and the bot's status wil
 
 | Command | Description |
 |---------|-------------|
-| `/scan` | Trigger an immediate scan and post any arb/EV alerts to ARB_CHANNEL_ID |
+| `/scan_arbs` | Trigger an immediate scan and post any arb/EV alerts to ARB_CHANNEL_ID |
 | `/latest_arbs` | Show the most recent arbitrage signals from the database |
 | `/latest_ev` | Show the most recent +EV signals from the database |
 | `/status` | Show scanner config (bankroll, thresholds, enabled sports, last scan time, API quota) |
