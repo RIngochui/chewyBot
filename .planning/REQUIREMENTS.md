@@ -139,14 +139,87 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BOT-01–07 | Phase 1 | Pending |
-| DB-01–04 | Phase 1 | Pending |
-| DEL-01–05 | Phase 1 | Pending |
-| MUS-01–17 | Phase 2 | Pending |
-| TTS-01–07 | Phase 2 | Pending |
-| EMO-01–05 | Phase 2 | Pending |
-| ARB-01–22 | Phase 3 | Pending |
-| PAR-01–14 | Phase 4 | Pending |
+| BOT-01 | Phase 1 — Foundation | Pending |
+| BOT-02 | Phase 1 — Foundation | Pending |
+| BOT-03 | Phase 1 — Foundation | Pending |
+| BOT-04 | Phase 1 — Foundation | Pending |
+| BOT-05 | Phase 1 — Foundation | Pending |
+| BOT-06 | Phase 1 — Foundation | Pending |
+| BOT-07 | Phase 1 — Foundation | Pending |
+| DB-01 | Phase 1 — Foundation | Pending |
+| DB-02 | Phase 1 — Foundation | Pending |
+| DB-03 | Phase 1 — Foundation | Pending |
+| DB-04 | Phase 1 — Foundation | Pending |
+| DEL-01 | Phase 1 — Foundation | Pending |
+| DEL-02 | Phase 1 — Foundation | Pending |
+| DEL-03 | Phase 1 — Foundation | Pending |
+| DEL-04 | Phase 1 — Foundation | Pending |
+| DEL-05 | Phase 1 — Foundation | Pending |
+| MUS-01 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-02 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-03 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-04 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-05 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-06 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-07 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-08 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-09 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-10 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-11 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-12 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-13 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-14 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-15 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-16 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-17 | Phase 2 — Voice & Community Cogs | Pending |
+| TTS-01 | Phase 2 — Voice & Community Cogs | Pending |
+| TTS-02 | Phase 2 — Voice & Community Cogs | Pending |
+| TTS-03 | Phase 2 — Voice & Community Cogs | Pending |
+| TTS-04 | Phase 2 — Voice & Community Cogs | Pending |
+| TTS-05 | Phase 2 — Voice & Community Cogs | Pending |
+| TTS-06 | Phase 2 — Voice & Community Cogs | Pending |
+| TTS-07 | Phase 2 — Voice & Community Cogs | Pending |
+| EMO-01 | Phase 2 — Voice & Community Cogs | Pending |
+| EMO-02 | Phase 2 — Voice & Community Cogs | Pending |
+| EMO-03 | Phase 2 — Voice & Community Cogs | Pending |
+| EMO-04 | Phase 2 — Voice & Community Cogs | Pending |
+| EMO-05 | Phase 2 — Voice & Community Cogs | Pending |
+| ARB-01 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-02 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-03 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-04 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-05 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-06 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-07 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-08 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-09 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-10 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-11 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-12 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-13 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-14 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-15 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-16 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-17 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-18 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-19 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-20 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-21 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-22 | Phase 3 — Arbitrage Scanner | Pending |
+| PAR-01 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-02 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-03 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-04 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-05 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-06 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-07 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-08 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-09 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-10 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-11 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-12 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-13 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-14 | Phase 4 — NBA Parlay AI | Pending |
 
 **Coverage:**
 - v1 requirements: 75 total
@@ -155,4 +228,4 @@
 
 ---
 *Requirements defined: 2026-03-30*
-*Last updated: 2026-03-30 after initial definition*
+*Last updated: 2026-03-30 after roadmap creation*
