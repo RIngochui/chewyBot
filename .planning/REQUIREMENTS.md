@@ -33,13 +33,13 @@
 - [x] **MUS-07**: /queue — shows current queue as paginated embed (10 songs per page)
 - [x] **MUS-08**: /nowplaying — shows current song with title, thumbnail, duration, and text progress bar
 - [x] **MUS-09**: /volume [0-100] — sets playback volume
-- [ ] **MUS-10**: /seek [seconds] — seeks to timestamp in current track
-- [ ] **MUS-11**: /shuffle — shuffles the queue
-- [ ] **MUS-12**: /loop [off/song/queue] — sets repeat mode
-- [ ] **MUS-13**: /remove [position] — removes song at queue position
-- [ ] **MUS-14**: /clearqueue — clears entire queue
+- [x] **MUS-10**: /seek [seconds] — seeks to timestamp in current track
+- [x] **MUS-11**: /shuffle — shuffles the queue
+- [x] **MUS-12**: /loop [off/song/queue] — sets repeat mode
+- [x] **MUS-13**: /remove [position] — removes song at queue position
+- [x] **MUS-14**: /clearqueue — clears entire queue
 - [x] **MUS-15**: Bot auto-leaves when voice channel is empty
-- [ ] **MUS-16**: Embeds posted to LOG_CHANNEL_ID on: song start (title, URL, thumbnail, duration, requested by), playlist added (name, count, first thumbnail), queue end
+- [x] **MUS-16**: Embeds posted to LOG_CHANNEL_ID on: song start (title, URL, thumbnail, duration, requested by), playlist added (name, count, first thumbnail), queue end
 - [x] **MUS-17**: Uses yt-dlp + discord.py voice client (no discord-music-player)
 
 ### TTS Cog
@@ -164,13 +164,13 @@
 | MUS-07 | Phase 2 — Voice & Community Cogs | Complete |
 | MUS-08 | Phase 2 — Voice & Community Cogs | Complete |
 | MUS-09 | Phase 2 — Voice & Community Cogs | Complete |
-| MUS-10 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-11 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-12 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-13 | Phase 2 — Voice & Community Cogs | Pending |
-| MUS-14 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-10 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-11 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-12 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-13 | Phase 2 — Voice & Community Cogs | Complete |
+| MUS-14 | Phase 2 — Voice & Community Cogs | Complete |
 | MUS-15 | Phase 2 — Voice & Community Cogs | Complete |
-| MUS-16 | Phase 2 — Voice & Community Cogs | Pending |
+| MUS-16 | Phase 2 — Voice & Community Cogs | Complete |
 | MUS-17 | Phase 2 — Voice & Community Cogs | Complete |
 | TTS-01 | Phase 2 — Voice & Community Cogs | Complete |
 | TTS-02 | Phase 2 — Voice & Community Cogs | Complete |

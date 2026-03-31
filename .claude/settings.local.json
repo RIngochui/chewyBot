@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "WebSearch",
+      "Skill(gsd:execute-phase)",
+      "Skill(gsd:autonomous)",
+      "Skill(gsd:plan-phase)",
+      "Bash(python -c \"from database.queries import UPSERT_TTS_LANG, GET_TTS_LANG; print\\(''imports OK''\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\(''database/queries.py''\\).read\\(\\)\\); print\\(''syntax OK''\\)\")",
+      "Bash(python:*)",
+      "Bash(python3 -c \"from database.queries import UPSERT_TTS_LANG, GET_TTS_LANG; print\\(''imports OK''\\)\")",
+      "Bash(python3 -c \"import ast; ast.parse\\(open\\(''database/queries.py''\\).read\\(\\)\\); print\\(''syntax OK''\\)\")",
+      "Bash(python3:*)",
+      "Bash(git -C /Users/ringochui/Projects/chewyBot worktree list)",
+      "Bash(git add:*)",
+      "Bash(git commit --no-verify -m \"feat\\(02-04\\): implement EmojiCog /emote and /list_emotes with EmojiBrowserView:*)",
+      "Bash(echo \"Command count \\(expect >= 9\\):\")",
+      "Bash(python3 -c \"content=open\\(''''cogs/music.py''''\\).read\\(\\); assert ''''tempfile'''' not in content, ''''tempfile found!''''; print\\(''''OK: no tempfile''''\\)\")",
+      "Bash(git commit --no-verify -m \"feat\\(02-01\\): implement MusicCog with full state management and playback commands:*)",
+      "Bash(git commit --no-verify -m \"docs\\(02-04\\): complete EmojiCog plan — EMO-01 through EMO-05:*)",
+      "Bash(git -C /Users/ringochui/Projects/chewyBot/.planning status --short)",
+      "Bash(git -C /Users/ringochui/Projects/chewyBot/.planning add phases/02-voice-community-cogs/02-04-SUMMARY.md STATE.md ROADMAP.md REQUIREMENTS.md)",
+      "Bash(git -C /Users/ringochui/Projects/chewyBot/.planning commit --no-verify -m \"docs\\(02-04\\): complete EmojiCog plan — EMO-01 through EMO-05:*)",
+      "Bash(git:*)",
+      "Bash(grep -l \"Self-Check: FAILED\" .planning/phases/02-voice-community-cogs/*.md)",
+      "Bash(__NEW_LINE_f16740aeb8662ab1__ echo:*)",
+      "Bash(__NEW_LINE_f16740aeb8662ab1__ grep:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:docs.the-odds-api.com)",
+      "WebFetch(domain:discord.py.readthedocs.io)",
+      "Bash(find /Users/ringochui/Projects/chewyBot -name *test*.py -o -name pytest.ini -o -name conftest.py)"
+    ]
+  }
+}
