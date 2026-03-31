@@ -73,14 +73,14 @@
 - [ ] **ARB-09**: MIN_ARB_PCT threshold filters noise (default 0.5%); deduplication skips re-alerting same market_key unless arb_pct improves by >0.2%
 - [ ] **ARB-10**: +EV detection: no_vig_probability() on consensus line; EV% = ((offered_decimal * fair_prob) - 1) * 100; MIN_EV_PCT threshold (default 2.0%)
 - [x] **ARB-11**: Math helpers in utils/odds_math.py: american_to_decimal, decimal_to_american, implied_probability, no_vig_probability
-- [ ] **ARB-12**: Auto-scanner loop runs every SCAN_INTERVAL_SECONDS (default 60s), posts alerts to ARB_CHANNEL_ID
-- [ ] **ARB-13**: /ping — bot latency
-- [ ] **ARB-14**: /scan — trigger manual scan
-- [ ] **ARB-15**: /latest_arbs — last 5 arb alerts as embeds
-- [ ] **ARB-16**: /latest_ev — last 5 EV alerts as embeds
-- [ ] **ARB-17**: /set_bankroll [amount], /set_min_arb [pct], /set_min_ev [pct] — update runtime config
-- [ ] **ARB-18**: /toggle_sport [sport] — enable/disable sport from scanning
-- [ ] **ARB-19**: /status — current config, last scan time, Odds API quota remaining
+- [x] **ARB-12**: Auto-scanner loop runs every SCAN_INTERVAL_SECONDS (default 60s), posts alerts to ARB_CHANNEL_ID
+- [x] **ARB-13**: /ping — bot latency
+- [x] **ARB-14**: /scan — trigger manual scan
+- [x] **ARB-15**: /latest_arbs — last 5 arb alerts as embeds
+- [x] **ARB-16**: /latest_ev — last 5 EV alerts as embeds
+- [x] **ARB-17**: /set_bankroll [amount], /set_min_arb [pct], /set_min_ev [pct] — update runtime config
+- [x] **ARB-18**: /toggle_sport [sport] — enable/disable sport from scanning
+- [x] **ARB-19**: /status — current config, last scan time, Odds API quota remaining
 - [x] **ARB-20**: Arb alert embed: title "⚡ Possible Arbitrage — chewyBot", fields for sport/event/market/sides/arb%/stake/profit, disclaimer footer
 - [x] **ARB-21**: EV alert embed: title "📈 +EV Opportunity — chewyBot", fields for sport/event/market/book/odds/fair probability/EV%, disclaimer footer
 - [x] **ARB-22**: Alert footers always say "possible"/"estimated"; never "guaranteed"
@@ -195,14 +195,14 @@
 | ARB-09 | Phase 3 — Arbitrage Scanner | Pending |
 | ARB-10 | Phase 3 — Arbitrage Scanner | Pending |
 | ARB-11 | Phase 3 — Arbitrage Scanner | Complete |
-| ARB-12 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-13 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-14 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-15 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-16 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-17 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-18 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-19 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-12 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-13 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-14 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-15 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-16 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-17 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-18 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-19 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-20 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-21 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-22 | Phase 3 — Arbitrage Scanner | Complete |

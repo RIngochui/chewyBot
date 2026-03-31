@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Bot entry point, config, database layer, logging, and all project deliverables (completed 2026-03-31)
 - [ ] **Phase 2: Voice & Community Cogs** - Music (yt-dlp), TTS (gTTS), and Emoji Proxy cogs
-- [ ] **Phase 3: Arbitrage Scanner** - Adapter pattern, odds engine, arb/EV detection, auto-scan, all scanner commands
+- [x] **Phase 3: Arbitrage Scanner** - Adapter pattern, odds engine, arb/EV detection, auto-scan, all scanner commands (completed 2026-03-31)
 - [ ] **Phase 4: NBA Parlay AI** - balldontlie integration, parlay generation, learning system, parlay commands
 
 ## Phase Details
@@ -67,8 +67,8 @@ Plans:
 - [x] 03-01-PLAN.md — odds_math.py + formatters.py: four math helpers and two Discord embed builders
 - [x] 03-02-PLAN.md — adapters/odds_api.py: mock mode, live API with per-sport backoff, quota tracking
 - [x] 03-03-PLAN.md — services/odds_normalizer.py: raw dict to NormalizedOdds canonical schema
-- [ ] 03-04-PLAN.md — services/arb_detector.py + queries.py signal SQL: arb/EV detection and DB persistence layer
-- [ ] 03-05-PLAN.md — cogs/arb.py: ArbCog with auto-scanner loop, dedup, 9 slash commands
+- [x] 03-04-PLAN.md — services/arb_detector.py + queries.py signal SQL: arb/EV detection and DB persistence layer
+- [x] 03-05-PLAN.md — cogs/arb.py: ArbCog with auto-scanner loop, dedup, 9 slash commands
 
 ### Phase 4: NBA Parlay AI
 **Goal**: The bot auto-posts a 3–5 leg NBA parlay daily at PARLAY_POST_TIME, learns from Discord reactions, persists weights across restarts, and filters underperforming leg types after 20+ tracked parlays
@@ -90,5 +90,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete   | 2026-03-31 |
 | 2. Voice & Community Cogs | 3/4 | In Progress|  |
-| 3. Arbitrage Scanner | 3/5 | In Progress|  |
+| 3. Arbitrage Scanner | 5/5 | Complete   | 2026-03-31 |
 | 4. NBA Parlay AI | 0/? | Not started | - |
