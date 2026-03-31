@@ -45,7 +45,12 @@ Plans:
   3. /emote [name] reposts as "[Username]: <emoji>" and the slash invocation is deleted; /add_emote and /remove_emote enforce the Manage Emojis permission
   4. Bot auto-leaves voice channel when it becomes empty
   5. LOG_CHANNEL_ID receives embed on song start, playlist add, and queue end
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 02-01-PLAN.md — MusicCog core: queue state, yt-dlp streaming, /play, /playlist, /skip, /stop, /pause, /resume, /queue, /nowplaying, /volume, auto-leave
+- [ ] 02-02-PLAN.md — MusicCog complete: /seek, /shuffle, /loop, /remove, /clearqueue, MUS-16 log embeds
+- [ ] 02-03-PLAN.md — TTSCog + TTS SQL: /tts, /tts_lang, /tts_stop, FIFO queue, temp file cleanup, language persistence
+- [ ] 02-04-PLAN.md — EmojiCog: /emote, /list_emotes, /add_emote, /remove_emote, pagination, fuzzy matching, image validation
 
 ### Phase 3: Arbitrage Scanner
 **Goal**: The odds scanner fetches live (or mock) data, detects arb and +EV opportunities above configured thresholds, auto-scans every SCAN_INTERVAL_SECONDS, and posts formatted alerts to ARB_CHANNEL_ID
@@ -78,6 +83,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete   | 2026-03-31 |
-| 2. Voice & Community Cogs | 0/? | Not started | - |
+| 2. Voice & Community Cogs | 0/4 | Not started | - |
 | 3. Arbitrage Scanner | 0/? | Not started | - |
 | 4. NBA Parlay AI | 0/? | Not started | - |
