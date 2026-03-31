@@ -160,3 +160,31 @@ UPSERT_TTS_LANG: str = """
 """
 
 GET_TTS_LANG: str = "SELECT value FROM bot_config WHERE key = ?"
+
+# ------------------------------------------------------------------ #
+# DML — Arbitrage and EV signal persistence (Phase 3)                #
+# ------------------------------------------------------------------ #
+
+INSERT_ARB_SIGNAL: str = """
+    INSERT INTO arb_signals
+        (market_key, event_name, sport, market_type, arb_pct,
+         stake_side_a, stake_side_b, estimated_profit,
+         book_a, book_b, odds_a, odds_b, selection_a, selection_b,
+         detected_at, alerted)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+"""
+
+INSERT_EV_SIGNAL: str = """
+    INSERT INTO ev_signals
+        (market_key, event_name, sport, market_type, selection_name,
+         book_name, decimal_odds, fair_probability, ev_pct, detected_at, alerted)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+"""
+
+SELECT_LATEST_ARB_SIGNALS: str = """
+    SELECT * FROM arb_signals ORDER BY detected_at DESC LIMIT ?
+"""
+
+SELECT_LATEST_EV_SIGNALS: str = """
+    SELECT * FROM ev_signals ORDER BY detected_at DESC LIMIT ?
+"""
