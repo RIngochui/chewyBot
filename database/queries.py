@@ -149,3 +149,14 @@ UPSERT_BOT_CONFIG: str = """
 GET_BOT_CONFIG: str = "SELECT key, value FROM bot_config"
 
 GET_BOT_CONFIG_KEY: str = "SELECT value FROM bot_config WHERE key = ?"
+
+# ------------------------------------------------------------------ #
+# DML — TTS language preference per-user (stored in bot_config table)#
+# ------------------------------------------------------------------ #
+
+UPSERT_TTS_LANG: str = """
+    INSERT INTO bot_config (key, value) VALUES (?, ?)
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
+"""
+
+GET_TTS_LANG: str = "SELECT value FROM bot_config WHERE key = ?"
