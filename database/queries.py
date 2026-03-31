@@ -188,3 +188,8 @@ SELECT_LATEST_ARB_SIGNALS: str = """
 SELECT_LATEST_EV_SIGNALS: str = """
     SELECT * FROM ev_signals ORDER BY detected_at DESC LIMIT ?
 """
+
+UPDATE_BOT_CONFIG: str = """
+    INSERT INTO bot_config (key, value) VALUES (?, ?)
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
+"""
