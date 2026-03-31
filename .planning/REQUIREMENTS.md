@@ -7,9 +7,9 @@
 
 ### Bot Foundation
 
-- [ ] **BOT-01**: Bot entry point (bot.py) loads all cogs independently — one cog failing never crashes others
+- [x] **BOT-01**: Bot entry point (bot.py) loads all cogs independently — one cog failing never crashes others
 - [x] **BOT-02**: config.py loads all secrets from .env via pydantic-settings and exposes a typed Config object
-- [ ] **BOT-03**: Bot displays status "chewyBot is online 🐾" on ready and posts "chewyBot has logged in!" to LOG_CHANNEL_ID
+- [x] **BOT-03**: Bot displays status "chewyBot is online 🐾" on ready and posts "chewyBot has logged in!" to LOG_CHANNEL_ID
 - [x] **BOT-04**: Logging writes to chewybot.log file AND Discord LOG_CHANNEL_ID using Python logging module
 - [x] **BOT-05**: All embeds use a consistent color scheme across all cogs (not default blurple)
 - [x] **BOT-06**: Full type hints on every function throughout the codebase
@@ -104,9 +104,9 @@
 
 ### Deliverables
 
-- [ ] **DEL-01**: requirements.txt with pinned versions
-- [ ] **DEL-02**: .env.example with all 20 variables documented
-- [ ] **DEL-03**: README.md: what chewyBot is, prerequisites (Python 3.11+, ffmpeg, API keys), step-by-step install, Discord Developer Portal setup, Odds API key setup, how to run, how to add a new sportsbook, how to swap SQLite → PostgreSQL
+- [x] **DEL-01**: requirements.txt with pinned versions
+- [x] **DEL-02**: .env.example with all 20 variables documented
+- [x] **DEL-03**: README.md: what chewyBot is, prerequisites (Python 3.11+, ffmpeg, API keys), step-by-step install, Discord Developer Portal setup, Odds API key setup, how to run, how to add a new sportsbook, how to swap SQLite → PostgreSQL
 - [x] **DEL-04**: mock/odds_api_sample.json — realistic multi-sport sample for MOCK_MODE
 - [x] **DEL-05**: mock/balldontlie_sample.json — realistic NBA teams/stats sample for MOCK_MODE
 
@@ -139,9 +139,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BOT-01 | Phase 1 — Foundation | Pending |
+| BOT-01 | Phase 1 — Foundation | Complete |
 | BOT-02 | Phase 1 — Foundation | Complete |
-| BOT-03 | Phase 1 — Foundation | Pending |
+| BOT-03 | Phase 1 — Foundation | Complete |
 | BOT-04 | Phase 1 — Foundation | Complete |
 | BOT-05 | Phase 1 — Foundation | Complete |
 | BOT-06 | Phase 1 — Foundation | Complete |
@@ -150,9 +150,9 @@
 | DB-02 | Phase 1 — Foundation | Complete |
 | DB-03 | Phase 1 — Foundation | Complete |
 | DB-04 | Phase 1 — Foundation | Complete |
-| DEL-01 | Phase 1 — Foundation | Pending |
-| DEL-02 | Phase 1 — Foundation | Pending |
-| DEL-03 | Phase 1 — Foundation | Pending |
+| DEL-01 | Phase 1 — Foundation | Complete |
+| DEL-02 | Phase 1 — Foundation | Complete |
+| DEL-03 | Phase 1 — Foundation | Complete |
 | DEL-04 | Phase 1 — Foundation | Complete |
 | DEL-05 | Phase 1 — Foundation | Complete |
 | MUS-01 | Phase 2 — Voice & Community Cogs | Pending |
