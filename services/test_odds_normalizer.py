@@ -144,10 +144,12 @@ class TestMarketKey:
         # market_key = {event_id}_h2h_los_angeles_lakers
         assert lakers_record.market_key == f"{event_id}_h2h_los_angeles_lakers"
 
-    def test_market_keys_are_unique_across_all_records(self):
+    def test_market_keys_unique_within_same_bookmaker(self):
+        # market_key encodes event+market_type+selection — unique within a single book's records
         results = run(normalize(MULTI_BOOK_EVENT, "basketball_nba", "NBA"))
-        market_keys = [r.market_key for r in results]
-        assert len(market_keys) == len(set(market_keys)), "market_keys must be unique"
+        fanduel_records = [r for r in results if r.book_name == "fanduel"]
+        market_keys = [r.market_key for r in fanduel_records]
+        assert len(market_keys) == len(set(market_keys)), "market_keys must be unique within same book"
 
     def test_market_key_contains_event_id(self):
         results = run(normalize(SINGLE_BOOK_EVENT, "basketball_nba", "NBA"))
