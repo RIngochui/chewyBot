@@ -12,7 +12,30 @@ Reliably surface sports arbitrage and +EV opportunities to the Discord channel �
 
 ### Validated
 
-(None yet — ship to validate)
+**Bot Foundation** (Validated in Phase 1: Foundation)
+- [x] Python 3.11+ entry point (bot.py) with cog loader — each cog loads independently so one failure never crashes others
+- [x] config.py loads all secrets from .env via pydantic-settings, exposes a typed Config object
+- [x] SQLite storage with abstraction layer structured for easy PostgreSQL swap (connection + driver change only)
+- [x] All SQL in database/queries.py — zero inline SQL anywhere else
+- [x] Logging to file (chewybot.log) + Discord LOG_CHANNEL_ID using Python logging module
+- [x] Bot status: "chewyBot is online 🐾" on ready; log channel message: "chewyBot has logged in!"
+- [x] Consistent embed color scheme across all cogs (not default blurple)
+
+**Database Schema** (Validated in Phase 1: Foundation)
+- [x] Tables: odds_snapshots, normalized_odds, arb_signals, ev_signals, parlays, parlay_legs, leg_type_weights, bot_config
+
+**Deliverables** (Validated in Phase 1: Foundation)
+- [x] requirements.txt with pinned versions
+- [x] .env.example with all variables
+- [x] README.md: setup, Discord Developer Portal, The Odds API key, running, adding sportsbooks, SQLite→PostgreSQL swap
+- [x] mock/odds_api_sample.json — realistic sample for MOCK_MODE
+- [x] mock/balldontlie_sample.json — realistic sample for MOCK_MODE
+
+**Data Layer** (Validated in Phase 1: Foundation)
+- [x] Pydantic v2 models: Market, OddsSnapshot, NormalizedOdds, ArbSignal, EVSignal, ParlayLeg, Parlay
+- [x] Abstract SportsbookAdapter interface + OddsApiAdapter stub
+- [x] Service stubs: odds_normalizer, arb_detector, parlay_engine (Phase 3/4 implement)
+- [x] Math utilities: odds_math, formatters
 
 ### Active
 
@@ -104,11 +127,11 @@ Reliably surface sports arbitrage and +EV opportunities to the Discord channel �
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| yt-dlp over discord-music-player | More control, actively maintained, no wrapper dependency | — Pending |
-| Raw SQL in queries.py over ORM | Explicit PostgreSQL swap path, no migration framework needed | — Pending |
-| Adapter pattern for sportsbooks | Easy to add new books without touching scanner logic | — Pending |
-| SQLite with swap comments over dual support | Simpler v1, clear migration path documented | — Pending |
-| Pydantic v2 for all API response parsing | Runtime validation, clear error messages on API changes | — Pending |
+| yt-dlp over discord-music-player | More control, actively maintained, no wrapper dependency | — Pending Phase 2 |
+| Raw SQL in queries.py over ORM | Explicit PostgreSQL swap path, no migration framework needed | Validated Phase 1 — queries.py enforced |
+| Adapter pattern for sportsbooks | Easy to add new books without touching scanner logic | Validated Phase 1 — base.py interface + OddsApiAdapter stub |
+| SQLite with swap comments over dual support | Simpler v1, clear migration path documented | Validated Phase 1 — 2-line swap documented in db.py |
+| Pydantic v2 for all API response parsing | Runtime validation, clear error messages on API changes | Validated Phase 1 — all 7 models use pydantic v2 BaseModel |
 
 ## Evolution
 
@@ -128,4 +151,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-30 after initialization*
+*Last updated: 2026-03-31 — Phase 1 Foundation complete*
