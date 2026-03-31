@@ -29,7 +29,10 @@
       "Bash(ls:*)",
       "WebFetch(domain:docs.the-odds-api.com)",
       "WebFetch(domain:discord.py.readthedocs.io)",
-      "Bash(find /Users/ringochui/Projects/chewyBot -name *test*.py -o -name pytest.ini -o -name conftest.py)"
+      "Bash(find /Users/ringochui/Projects/chewyBot -name *test*.py -o -name pytest.ini -o -name conftest.py)",
+      "Bash(/tmp/verification_summary.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(grep -h ARB- .planning/phases/03-arbitrage-scanner/*-PLAN.md)"
     ]
   }
 }

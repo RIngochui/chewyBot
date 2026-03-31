@@ -89,6 +89,57 @@ On first run, you should see (in your terminal and `chewybot.log`):
 
 Your log channel will receive `chewyBot has logged in!` and the bot's status will show **chewyBot is online 🐾**. Slash commands appear instantly (guild-scoped sync, no 1-hour global delay).
 
+## Command Reference
+
+### Arbitrage Scanner
+
+| Command | Description |
+|---------|-------------|
+| `/scan` | Trigger an immediate scan and post any arb/EV alerts to ARB_CHANNEL_ID |
+| `/latest_arbs` | Show the most recent arbitrage signals from the database |
+| `/latest_ev` | Show the most recent +EV signals from the database |
+| `/status` | Show scanner config (bankroll, thresholds, enabled sports, last scan time, API quota) |
+| `/set_bankroll <amount>` | Set the bankroll used to calculate recommended stakes (e.g. `/set_bankroll 1000`) |
+| `/set_min_arb <pct>` | Set the minimum arb % to alert on (e.g. `/set_min_arb 1.5` for 1.5%) |
+| `/set_min_ev <pct>` | Set the minimum EV % to alert on (e.g. `/set_min_ev 3.0`) |
+| `/toggle_sport <key>` | Enable or disable a sport from scanning (e.g. `/toggle_sport basketball_nba`) |
+| `/ping` | Check that the bot and scanner are responsive |
+
+The auto-scanner fires every `SCAN_INTERVAL_SECONDS` (default: 60) and posts alerts automatically. It deduplicates — the same opportunity is not re-posted unless arb% improves by more than 0.2%.
+
+Arb alert embeds are titled **"Possible Arbitrage"** and include sport, event, market, both books, arb%, recommended stake split, estimated profit, and a "Not financial advice" disclaimer. Set `MOCK_MODE=true` in `.env` to test without consuming API quota.
+
+### Music
+
+| Command | Description |
+|---------|-------------|
+| `/play <query>` | Play audio from a YouTube URL or search query |
+| `/pause` | Pause playback |
+| `/resume` | Resume paused playback |
+| `/skip` | Skip the current track |
+| `/stop` | Stop playback and clear the queue |
+| `/queue` | Show the current queue |
+| `/volume <0-100>` | Set playback volume |
+| `/seek <seconds>` | Seek to a position in the current track |
+| `/shuffle` | Shuffle the queue |
+| `/loop` | Toggle loop mode for the current track |
+| `/nowplaying` | Show the currently playing track |
+
+### Text-to-Speech
+
+| Command | Description |
+|---------|-------------|
+| `/tts <text>` | Speak text in your current voice channel via gTTS |
+
+### Emoji Proxy
+
+| Command | Description |
+|---------|-------------|
+| `/emoji add <name> <url>` | Add a custom emoji to the server |
+| `/emoji remove <name>` | Remove a custom emoji |
+| `/emoji list` | List all custom emoji |
+| `/emoji post <name>` | Post a custom emoji inline (Nitro-free) |
+
 ## How to Add a New Sportsbook
 
 chewyBot uses an adapter pattern to make adding new sportsbooks straightforward:
