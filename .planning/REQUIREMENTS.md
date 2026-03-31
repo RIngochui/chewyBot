@@ -11,16 +11,16 @@
 - [ ] **BOT-02**: config.py loads all secrets from .env via pydantic-settings and exposes a typed Config object
 - [ ] **BOT-03**: Bot displays status "chewyBot is online 🐾" on ready and posts "chewyBot has logged in!" to LOG_CHANNEL_ID
 - [ ] **BOT-04**: Logging writes to chewybot.log file AND Discord LOG_CHANNEL_ID using Python logging module
-- [ ] **BOT-05**: All embeds use a consistent color scheme across all cogs (not default blurple)
-- [ ] **BOT-06**: Full type hints on every function throughout the codebase
-- [ ] **BOT-07**: All external API calls use exponential backoff with max 3 retries
+- [x] **BOT-05**: All embeds use a consistent color scheme across all cogs (not default blurple)
+- [x] **BOT-06**: Full type hints on every function throughout the codebase
+- [x] **BOT-07**: All external API calls use exponential backoff with max 3 retries
 
 ### Database
 
 - [ ] **DB-01**: SQLite storage layer with all SQL in database/queries.py — zero inline SQL anywhere else
 - [ ] **DB-02**: db.py connection manager has clear comment block showing exactly what to change to swap SQLite → PostgreSQL (connection string and driver import only)
 - [ ] **DB-03**: Tables created: odds_snapshots, normalized_odds, arb_signals, ev_signals, parlays, parlay_legs, leg_type_weights, bot_config
-- [ ] **DB-04**: Pydantic v2 models used for all API response parsing and data validation
+- [x] **DB-04**: Pydantic v2 models used for all API response parsing and data validation
 
 ### Music Cog
 
@@ -107,8 +107,8 @@
 - [ ] **DEL-01**: requirements.txt with pinned versions
 - [ ] **DEL-02**: .env.example with all 20 variables documented
 - [ ] **DEL-03**: README.md: what chewyBot is, prerequisites (Python 3.11+, ffmpeg, API keys), step-by-step install, Discord Developer Portal setup, Odds API key setup, how to run, how to add a new sportsbook, how to swap SQLite → PostgreSQL
-- [ ] **DEL-04**: mock/odds_api_sample.json — realistic multi-sport sample for MOCK_MODE
-- [ ] **DEL-05**: mock/balldontlie_sample.json — realistic NBA teams/stats sample for MOCK_MODE
+- [x] **DEL-04**: mock/odds_api_sample.json — realistic multi-sport sample for MOCK_MODE
+- [x] **DEL-05**: mock/balldontlie_sample.json — realistic NBA teams/stats sample for MOCK_MODE
 
 ## v2 Requirements
 
@@ -143,18 +143,18 @@
 | BOT-02 | Phase 1 — Foundation | Pending |
 | BOT-03 | Phase 1 — Foundation | Pending |
 | BOT-04 | Phase 1 — Foundation | Pending |
-| BOT-05 | Phase 1 — Foundation | Pending |
-| BOT-06 | Phase 1 — Foundation | Pending |
-| BOT-07 | Phase 1 — Foundation | Pending |
+| BOT-05 | Phase 1 — Foundation | Complete |
+| BOT-06 | Phase 1 — Foundation | Complete |
+| BOT-07 | Phase 1 — Foundation | Complete |
 | DB-01 | Phase 1 — Foundation | Pending |
 | DB-02 | Phase 1 — Foundation | Pending |
 | DB-03 | Phase 1 — Foundation | Pending |
-| DB-04 | Phase 1 — Foundation | Pending |
+| DB-04 | Phase 1 — Foundation | Complete |
 | DEL-01 | Phase 1 — Foundation | Pending |
 | DEL-02 | Phase 1 — Foundation | Pending |
 | DEL-03 | Phase 1 — Foundation | Pending |
-| DEL-04 | Phase 1 — Foundation | Pending |
-| DEL-05 | Phase 1 — Foundation | Pending |
+| DEL-04 | Phase 1 — Foundation | Complete |
+| DEL-05 | Phase 1 — Foundation | Complete |
 | MUS-01 | Phase 2 — Voice & Community Cogs | Pending |
 | MUS-02 | Phase 2 — Voice & Community Cogs | Pending |
 | MUS-03 | Phase 2 — Voice & Community Cogs | Pending |
