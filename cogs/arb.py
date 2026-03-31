@@ -141,7 +141,7 @@ class ArbCog(commands.Cog, name="Arbitrage"):
             f"Pong! Latency: {latency_ms}ms", ephemeral=True
         )
 
-    @app_commands.command(name="scan", description="Trigger a manual odds scan")
+    @app_commands.command(name="scan_arbs", description="Trigger a manual odds scan")
     async def scan(self, interaction: discord.Interaction) -> None:
         """Run an immediate scan and post results to ARB_CHANNEL_ID (ARB-14)."""
         await interaction.response.defer(ephemeral=True)
