@@ -81,7 +81,7 @@ Each task was committed atomically:
 1. **Task 1: Pydantic v2 data models** - `c9977f4` (feat)
 2. **Task 2: Adapter interface + service stubs + utility stubs** - `331cb52` (feat)
 
-**Plan metadata:** (to be added after docs commit)
+**Plan metadata:** `0fd353e` (docs: complete plan)
 
 ## Files Created/Modified
 
@@ -136,6 +136,12 @@ None - no external service configuration required.
 - Phase 3 executor can implement services/arb_detector.py, services/odds_normalizer.py, utils/odds_math.py, utils/formatters.py, adapters/odds_api.py against these model definitions
 - Phase 4 executor can implement services/parlay_engine.py against Parlay/ParlayLeg models
 - config.py (from Plan 01) must exist before `utils/formatters.py` can be runtime-imported (EMBED_COLOR dependency)
+
+## Self-Check: PASSED
+
+- All 13 created files verified present on disk
+- Commit c9977f4 (Task 1 models) verified in git log
+- Commit 331cb52 (Task 2 stubs) verified in git log
 
 ---
 *Phase: 01-foundation*
