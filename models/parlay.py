@@ -8,7 +8,9 @@ class ParlayLeg(BaseModel):
     """A single leg within a parlay bet.
 
     leg_score: composite 0.0-1.0 score from 5-factor weighting (PAR-03)
-    leg_type: category used for weight tracking (e.g. 'spread', 'moneyline', 'over_under')
+    leg_type: category used for weight tracking; one of:
+        h2h_favorite, h2h_underdog, spread_home, spread_away, totals_over, totals_under
+    game_id: balldontlie/odds-api event id used for same-game dedup (PAR-04)
     """
     team: str
     market_type: str
@@ -16,6 +18,7 @@ class ParlayLeg(BaseModel):
     american_odds: int
     leg_score: float
     leg_type: str
+    game_id: str = ""
     outcome: str = "pending"  # "pending" | "hit" | "miss"
 
 
