@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 Phase: 4
 Plan: 02 complete, 03 next
 Status: Executing
-Last activity: 2026-03-31
+Last activity: 2026-04-01 - Completed quick task 260401-jzn: Filter out stale and far-future events from arbitrage scanner
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -122,6 +122,12 @@ None yet.
 ### Blockers/Concerns
 
 None yet.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260401-jzn | Filter out stale and far-future events from arbitrage scanner | 2026-04-01 | 5150c6c | [260401-jzn-filter-out-stale-and-far-future-events-f](./quick/260401-jzn-filter-out-stale-and-far-future-events-f/) |
 
 ## Session Continuity
 
