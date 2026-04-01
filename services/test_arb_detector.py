@@ -48,14 +48,15 @@ def _make_record(
 
 
 def _lakers_warriors_arb_records() -> list[NormalizedOdds]:
-    """Lakers/Warriors mock records with known 10.1% arb.
+    """Lakers/Warriors mock records with known ~11.2% arb (equal-profit basis).
 
     FanDuel: Lakers 2.20, Warriors 1.75
     DraftKings: Lakers 1.65, Warriors 2.25
 
     Best per selection: Lakers=2.20 (FanDuel), Warriors=2.25 (DraftKings)
-    sum_implied = 1/2.20 + 1/2.25 = 0.4545... + 0.4444... = 0.899...
-    arb_pct = (1 - 0.899) * 100 ≈ 10.1%
+    sum_implied = 1/2.20 + 1/2.25 = 0.4545... + 0.4444... = 0.89899...
+    arb_pct = (1 - sum_implied) / sum_implied * 100 ≈ 11.24%
+    (equal-profit basis: guaranteed profit as % of total stake)
     """
     event_id = "los_angeles_lakers_golden_state_warriors_20260401"
     start_time = datetime(2026, 4, 1, 2, 0, 0)
@@ -204,7 +205,11 @@ def _ev_records() -> list[NormalizedOdds]:
 
 class TestDetectArbFindsKnownArb:
     def test_finds_lakers_warriors_arb(self):
-        """detect_arb must find the ~10.1% Lakers/Warriors arb."""
+        """detect_arb must find the ~11.24% Lakers/Warriors arb (equal-profit basis).
+
+        sum_implied = 1/2.20 + 1/2.25 = 0.89899
+        arb_pct = (1 - 0.89899) / 0.89899 * 100 ≈ 11.24%
+        """
         from services.arb_detector import detect_arb
 
         records = _lakers_warriors_arb_records()
@@ -213,7 +218,7 @@ class TestDetectArbFindsKnownArb:
         assert len(signals) == 1
         sig = signals[0]
         assert isinstance(sig, ArbSignal)
-        assert abs(sig.arb_pct - 10.1) < 0.5, f"Expected ~10.1%, got {sig.arb_pct}"
+        assert abs(sig.arb_pct - 11.24) < 0.5, f"Expected ~11.24%, got {sig.arb_pct}"
 
     def test_arb_signal_correct_books(self):
         """ArbSignal must identify best books for each side."""
@@ -405,3 +410,271 @@ class TestDetectEvNoOpportunity:
         # Filter above max — should return []
         no_signals = asyncio.run(detect_ev(records, min_ev_pct=max_ev + 1.0))
         assert no_signals == []
+
+
+# ---------------------------------------------------------------------------
+# Equal-profit math regression tests (fix for arb-math-fix bug)
+# ---------------------------------------------------------------------------
+
+class TestArbMathEqualProfit:
+    """Verify arb_pct and estimated_profit use equal-profit basis.
+
+    The correct formulas are:
+      arb_pct = (1 - sum_implied) / sum_implied * 100
+      profit   = bankroll * arb_pct / 100
+
+    This guarantees that stake_side_a * odds_a == stake_side_b * odds_b == bankroll + profit,
+    i.e., both legs return the same amount regardless of outcome.
+    """
+
+    def test_colorado_vancouver_profit_approx_4_dollars(self):
+        """Fix spec Example 2: Colorado 1.95 / Vancouver 2.42 / S=50 → profit ≈ $4.00.
+
+        sum_implied = 1/1.95 + 1/2.42 = 0.51282 + 0.41322 = 0.92604
+        arb_pct = (1 - 0.92604) / 0.92604 * 100 ≈ 7.99%
+        profit  = 50 * 7.99 / 100 ≈ $3.99
+        """
+        from services.arb_detector import detect_arb
+
+        event_id = "vancouver_canucks_colorado_avalanche_20260401"
+        start_time = datetime(2026, 4, 1, 2, 0, 0)
+        records = [
+            _make_record(
+                event_id=event_id,
+                market_key=f"{event_id}_h2h_colorado_avalanche",
+                market_type="h2h",
+                selection_name="Colorado Avalanche",
+                decimal_odds=1.95,
+                american_odds=-105,
+                book_name="fanduel",
+                event_name="Colorado Avalanche @ Vancouver Canucks",
+                start_time=start_time,
+            ),
+            _make_record(
+                event_id=event_id,
+                market_key=f"{event_id}_h2h_vancouver_canucks",
+                market_type="h2h",
+                selection_name="Vancouver Canucks",
+                decimal_odds=2.42,
+                american_odds=142,
+                book_name="draftkings",
+                event_name="Colorado Avalanche @ Vancouver Canucks",
+                start_time=start_time,
+            ),
+        ]
+        signals = asyncio.run(detect_arb(records, min_arb_pct=0.5, bankroll=50.0))
+        assert len(signals) == 1
+        sig = signals[0]
+        assert abs(sig.estimated_profit - 4.00) < 0.05, (
+            f"Expected profit ≈ $4.00, got ${sig.estimated_profit}"
+        )
+        assert abs(sig.arb_pct - 8.0) < 0.1, (
+            f"Expected arb_pct ≈ 8.0%, got {sig.arb_pct}%"
+        )
+
+    def test_both_legs_return_equal_payout(self):
+        """stake_a * odds_a must equal stake_b * odds_b (equal-profit property)."""
+        from services.arb_detector import detect_arb
+
+        records = _lakers_warriors_arb_records()
+        signals = asyncio.run(detect_arb(records, min_arb_pct=0.5, bankroll=100.0))
+        assert len(signals) == 1
+        sig = signals[0]
+        payout_a = round(sig.stake_side_a * sig.odds_a, 4)
+        payout_b = round(sig.stake_side_b * sig.odds_b, 4)
+        assert abs(payout_a - payout_b) < 0.02, (
+            f"Unequal payouts: side A={payout_a}, side B={payout_b}"
+        )
+
+    def test_estimated_profit_equals_arb_pct_times_bankroll(self):
+        """estimated_profit must equal bankroll * arb_pct / 100."""
+        from services.arb_detector import detect_arb
+
+        bankroll = 100.0
+        records = _lakers_warriors_arb_records()
+        signals = asyncio.run(detect_arb(records, min_arb_pct=0.5, bankroll=bankroll))
+        sig = signals[0]
+        expected = round(bankroll * sig.arb_pct / 100, 2)
+        assert abs(sig.estimated_profit - expected) < 0.01
+
+
+# ---------------------------------------------------------------------------
+# Spread line matching tests (fix for arb-math-fix bug)
+# ---------------------------------------------------------------------------
+
+def _spread_records_mismatched_lines() -> list[NormalizedOdds]:
+    """Spread records where each book has a different point — NOT a valid arb pair.
+
+    DraftKings: Anaheim -2.5 @ 3.150 (Anaheim is big favorite)
+    BetMGM:     San Jose -2.5 @ 3.000 (San Jose is also big favorite on their line)
+
+    These are two DIFFERENT markets (different point values seen as a whole):
+    DraftKings offers Anaheim -2.5 / San Jose +2.5
+    BetMGM offers San Jose -2.5 / Anaheim +2.5
+    The detector must NOT pair Anaheim@DK (-2.5 side) with SJ@BetMGM (-2.5 side)
+    because both would be betting team covers at -2.5 — same side, not opposing.
+    In the Odds API model: DK Anaheim has point=-2.5, BetMGM SJ has point=-2.5,
+    so their sum is -2.5 + -2.5 = -5.0 ≠ 0 → rejected.
+    """
+    event_id = "anaheim_ducks_san_jose_sharks_20260401"
+    start_time = datetime(2026, 4, 1, 2, 0, 0)
+    return [
+        # DraftKings: Anaheim -2.5 @ 3.150, San Jose +2.5 @ 1.35
+        _make_record(
+            event_id=event_id,
+            market_key=f"{event_id}_spreads_anaheim_ducks",
+            market_type="spreads",
+            selection_name="Anaheim Ducks",
+            line_value=-2.5,
+            decimal_odds=3.150,
+            american_odds=215,
+            book_name="draftkings",
+            event_name="Anaheim Ducks @ San Jose Sharks",
+            start_time=start_time,
+        ),
+        _make_record(
+            event_id=event_id,
+            market_key=f"{event_id}_spreads_san_jose_sharks",
+            market_type="spreads",
+            selection_name="San Jose Sharks",
+            line_value=2.5,
+            decimal_odds=1.35,
+            american_odds=-286,
+            book_name="draftkings",
+            event_name="Anaheim Ducks @ San Jose Sharks",
+            start_time=start_time,
+        ),
+        # BetMGM: San Jose -2.5 @ 3.000, Anaheim +2.5 @ 1.40
+        _make_record(
+            event_id=event_id,
+            market_key=f"{event_id}_spreads_san_jose_sharks",
+            market_type="spreads",
+            selection_name="San Jose Sharks",
+            line_value=-2.5,
+            decimal_odds=3.000,
+            american_odds=200,
+            book_name="betmgm",
+            event_name="Anaheim Ducks @ San Jose Sharks",
+            start_time=start_time,
+        ),
+        _make_record(
+            event_id=event_id,
+            market_key=f"{event_id}_spreads_anaheim_ducks",
+            market_type="spreads",
+            selection_name="Anaheim Ducks",
+            line_value=2.5,
+            decimal_odds=1.40,
+            american_odds=-250,
+            book_name="betmgm",
+            event_name="Anaheim Ducks @ San Jose Sharks",
+            start_time=start_time,
+        ),
+    ]
+
+
+def _spread_records_matching_lines() -> list[NormalizedOdds]:
+    """Spread records where books share the same spread line — a valid pair.
+
+    Both books have Anaheim -2.5 / San Jose +2.5 but with different juice,
+    creating a genuine arb opportunity.
+
+    FanDuel:    Anaheim -2.5 @ 2.10, San Jose +2.5 @ 1.91
+    DraftKings: Anaheim -2.5 @ 1.85, San Jose +2.5 @ 2.20
+
+    Best per selection (same line): Anaheim=2.10 (FD), San Jose=2.20 (DK)
+    sum_implied = 1/2.10 + 1/2.20 = 0.47619 + 0.45455 = 0.93074
+    arb_pct = (1 - 0.93074) / 0.93074 * 100 ≈ 7.44%
+    """
+    event_id = "anaheim_ducks_san_jose_sharks_20260402"
+    start_time = datetime(2026, 4, 2, 2, 0, 0)
+    return [
+        _make_record(
+            event_id=event_id,
+            market_key=f"{event_id}_spreads_anaheim_ducks",
+            market_type="spreads",
+            selection_name="Anaheim Ducks",
+            line_value=-2.5,
+            decimal_odds=2.10,
+            american_odds=110,
+            book_name="fanduel",
+            event_name="Anaheim Ducks @ San Jose Sharks",
+            start_time=start_time,
+        ),
+        _make_record(
+            event_id=event_id,
+            market_key=f"{event_id}_spreads_san_jose_sharks",
+            market_type="spreads",
+            selection_name="San Jose Sharks",
+            line_value=2.5,
+            decimal_odds=1.91,
+            american_odds=-110,
+            book_name="fanduel",
+            event_name="Anaheim Ducks @ San Jose Sharks",
+            start_time=start_time,
+        ),
+        _make_record(
+            event_id=event_id,
+            market_key=f"{event_id}_spreads_anaheim_ducks",
+            market_type="spreads",
+            selection_name="Anaheim Ducks",
+            line_value=-2.5,
+            decimal_odds=1.85,
+            american_odds=-117,
+            book_name="draftkings",
+            event_name="Anaheim Ducks @ San Jose Sharks",
+            start_time=start_time,
+        ),
+        _make_record(
+            event_id=event_id,
+            market_key=f"{event_id}_spreads_san_jose_sharks",
+            market_type="spreads",
+            selection_name="San Jose Sharks",
+            line_value=2.5,
+            decimal_odds=2.20,
+            american_odds=120,
+            book_name="draftkings",
+            event_name="Anaheim Ducks @ San Jose Sharks",
+            start_time=start_time,
+        ),
+    ]
+
+
+class TestSpreadLineMismatch:
+    """Spread arb must only pair legs with equal-and-opposite line values."""
+
+    def test_mismatched_spread_lines_rejected(self):
+        """detect_arb must reject a spread pair where line_values don't cancel.
+
+        Example 1 from the bug report: both teams offered at -2.5 on their
+        respective books — those are same-direction bets, not an arb.
+        In Odds API data, these appear as line_value=-2.5 for both selections
+        within their respective best picks, so lv_a + lv_b = -5 ≠ 0 → rejected.
+        """
+        from services.arb_detector import detect_arb
+
+        records = _spread_records_mismatched_lines()
+        signals = asyncio.run(detect_arb(records, min_arb_pct=0.1, bankroll=50.0))
+        assert signals == [], (
+            f"Expected no signals for mismatched spread lines, got {signals}"
+        )
+
+    def test_matching_spread_lines_detected(self):
+        """detect_arb must find arb when spread lines are equal-and-opposite."""
+        from services.arb_detector import detect_arb
+
+        records = _spread_records_matching_lines()
+        signals = asyncio.run(detect_arb(records, min_arb_pct=0.1, bankroll=50.0))
+        assert len(signals) == 1, (
+            f"Expected 1 arb signal for matching spread lines, got {len(signals)}"
+        )
+        sig = signals[0]
+        assert sig.market_type == "spreads"
+        assert sig.arb_pct > 0
+
+    def test_h2h_market_unaffected_by_line_check(self):
+        """h2h markets (no line_value) must still be detected normally."""
+        from services.arb_detector import detect_arb
+
+        records = _lakers_warriors_arb_records()
+        signals = asyncio.run(detect_arb(records, min_arb_pct=0.5, bankroll=100.0))
+        assert len(signals) == 1, "h2h arb should still be detected"

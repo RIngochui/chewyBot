@@ -21,9 +21,12 @@ async def detect_arb(
 
     Algorithm:
     1. Group records by (event_id, market_type)
-    2. Find best (highest) decimal_odds per selection across all books
+    2. Find best (highest) decimal_odds per selection across all books,
+       keeping only records whose line_value agrees with the group consensus
+       (for spreads/totals: all selections must share the same absolute line).
     3. If sum(1/best_odds_per_selection) < 1.0 → arb exists
-    4. Compute arb_pct, stakes, and profit; append ArbSignal if above threshold
+    4. Compute arb_pct = (1 - sum_implied) / sum_implied * 100 (equal-profit basis)
+       stakes via equal-profit allocation, profit = bankroll * arb_pct / 100
     """
     signals: list[ArbSignal] = []
 
@@ -33,50 +36,87 @@ async def detect_arb(
         groups[(rec.event_id, rec.market_type)].append(rec)
 
     for (event_id, market_type), records in groups.items():
-        # Best odds per selection: (odds, book_name, market_key)
-        best: dict[str, tuple[float, str, str]] = {}
-        for rec in records:
-            if rec.selection_name not in best or rec.decimal_odds > best[rec.selection_name][0]:
-                best[rec.selection_name] = (rec.decimal_odds, rec.book_name, rec.market_key)
+        # For spread/totals markets we must only compare legs at the same line.
+        # Group records further by abs(line_value) so we only match lines where
+        # the two sides are equal-and-opposite (e.g. -2.5 vs +2.5).
+        # h2h and other markets have line_value=None — treat as a single group.
+        line_groups: dict[float | None, list[NormalizedOdds]]
+        if market_type in ("spreads", "totals"):
+            line_groups = defaultdict(list)
+            for rec in records:
+                # Key on absolute value so -2.5 and +2.5 land in the same bucket.
+                line_key = abs(rec.line_value) if rec.line_value is not None else None
+                line_groups[line_key].append(rec)
+        else:
+            line_groups = {None: records}
 
-        # Need at least 2 selections to form an arb
-        if len(best) < 2:
-            continue
+        for line_key, line_records in line_groups.items():
+            # Best odds per selection within this line bucket: (odds, book_name, market_key, line_value)
+            best: dict[str, tuple[float, str, str, float | None]] = {}
+            for rec in line_records:
+                if rec.selection_name not in best or rec.decimal_odds > best[rec.selection_name][0]:
+                    best[rec.selection_name] = (
+                        rec.decimal_odds,
+                        rec.book_name,
+                        rec.market_key,
+                        rec.line_value,
+                    )
 
-        sum_implied = sum(1.0 / odds for odds, _, _ in best.values())
-        if sum_implied >= 1.0:
-            continue
+            # Need at least 2 selections to form an arb
+            if len(best) < 2:
+                continue
 
-        arb_pct = (1.0 - sum_implied) * 100
-        if arb_pct < min_arb_pct:
-            continue
+            # For spreads/totals: validate that the two legs are genuinely opposing.
+            # The two line_values should be equal-and-opposite (e.g. -2.5 and +2.5).
+            if market_type in ("spreads", "totals"):
+                line_vals = [lv for _, _, _, lv in best.values()]
+                # Require exactly two legs each with a non-None line_value that sums to ~0
+                if len(line_vals) != 2:
+                    continue
+                lv_a, lv_b = line_vals
+                if lv_a is None or lv_b is None:
+                    continue
+                if abs(lv_a + lv_b) > 0.01:
+                    # Lines don't cancel — not a valid opposing arb pair
+                    continue
 
-        # Build signal from first two selections
-        selections = list(best.items())
-        sel_a, (odds_a, book_a, mkey) = selections[0]
-        sel_b, (odds_b, book_b, _) = selections[1]
+            sum_implied = sum(1.0 / odds for odds, _, _, _ in best.values())
+            if sum_implied >= 1.0:
+                continue
 
-        stake_a = round(bankroll * (1.0 / odds_a) / sum_implied, 2)
-        stake_b = round(bankroll * (1.0 / odds_b) / sum_implied, 2)
-        profit = round(bankroll * arb_pct / 100, 2)
+            # Equal-profit arb percentage: return on total stake when stakes are
+            # allocated proportionally to implied probability.
+            # arb_pct = (1 - sum_implied) / sum_implied * 100
+            arb_pct = (1.0 - sum_implied) / sum_implied * 100
+            if arb_pct < min_arb_pct:
+                continue
 
-        signals.append(ArbSignal(
-            market_key=mkey,
-            event_name=records[0].event_name,
-            sport=records[0].sport,
-            market_type=market_type,
-            arb_pct=round(arb_pct, 4),
-            stake_side_a=stake_a,
-            stake_side_b=stake_b,
-            estimated_profit=profit,
-            book_a=book_a,
-            book_b=book_b,
-            odds_a=odds_a,
-            odds_b=odds_b,
-            selection_a=sel_a,
-            selection_b=sel_b,
-            detected_at=datetime.utcnow(),
-        ))
+            # Build signal from first two selections
+            selections = list(best.items())
+            sel_a, (odds_a, book_a, mkey, _lv_a) = selections[0]
+            sel_b, (odds_b, book_b, _mkey_b, _lv_b) = selections[1]
+
+            stake_a = round(bankroll * (1.0 / odds_a) / sum_implied, 2)
+            stake_b = round(bankroll * (1.0 / odds_b) / sum_implied, 2)
+            profit = round(bankroll * arb_pct / 100, 2)
+
+            signals.append(ArbSignal(
+                market_key=mkey,
+                event_name=records[0].event_name,
+                sport=records[0].sport,
+                market_type=market_type,
+                arb_pct=round(arb_pct, 4),
+                stake_side_a=stake_a,
+                stake_side_b=stake_b,
+                estimated_profit=profit,
+                book_a=book_a,
+                book_b=book_b,
+                odds_a=odds_a,
+                odds_b=odds_b,
+                selection_a=sel_a,
+                selection_b=sel_b,
+                detected_at=datetime.utcnow(),
+            ))
 
     return signals
 

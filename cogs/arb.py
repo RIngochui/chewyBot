@@ -69,18 +69,33 @@ class ArbCog(commands.Cog, name="Arbitrage"):
     # Core scan logic                                                      #
     # ------------------------------------------------------------------ #
 
-    async def _run_scan(self) -> tuple[list[ArbSignal], list[EVSignal]]:
+    async def _run_scan(
+        self,
+        market_type_filter: Optional[str] = None,
+    ) -> tuple[list[ArbSignal], list[EVSignal]]:
         """Fetch odds for all enabled sports, detect arb/EV, persist, and post embeds.
+
+        Args:
+            market_type_filter: When set to "h2h", "spreads", or "totals", only
+                records matching that market type are passed to detect_arb/detect_ev.
+                None (default) scans all market types.
 
         Returns:
             Tuple of (arb_signals, ev_signals) found in this scan.
         """
         all_normalized = []
+        # Determine which market types to request from the API.
+        # If filtered, only fetch the requested market type to save quota.
+        markets_to_fetch = (
+            [market_type_filter]
+            if market_type_filter is not None
+            else ["h2h", "spreads", "totals"]
+        )
         for sport_key in self._enabled_sports:
             raw_events = await self.adapter.get_odds(
                 sport_key=sport_key,
                 regions=["us"],
-                markets=["h2h", "spreads", "totals"],
+                markets=markets_to_fetch,
             )
             for ev in raw_events:
                 records = await normalize(
@@ -91,8 +106,16 @@ class ArbCog(commands.Cog, name="Arbitrage"):
                 )
                 all_normalized.extend(records)
 
-        arb_signals = await detect_arb(all_normalized, self._min_arb_pct, self._bankroll)
-        ev_signals = await detect_ev(all_normalized, self._min_ev_pct) if config.ENABLE_EV_SCAN else []
+        # Apply market_type filter after normalization (belt-and-suspenders —
+        # in case the API returns extra market types despite the request filter).
+        filtered = (
+            [r for r in all_normalized if r.market_type == market_type_filter]
+            if market_type_filter is not None
+            else all_normalized
+        )
+
+        arb_signals = await detect_arb(filtered, self._min_arb_pct, self._bankroll)
+        ev_signals = await detect_ev(filtered, self._min_ev_pct) if config.ENABLE_EV_SCAN else []
 
         self._last_scan_at = datetime.now(tz=timezone.utc)
 
@@ -142,13 +165,36 @@ class ArbCog(commands.Cog, name="Arbitrage"):
         )
 
     @app_commands.command(name="scan_arbs", description="Trigger a manual odds scan")
-    async def scan(self, interaction: discord.Interaction) -> None:
-        """Run an immediate scan and post results to ARB_CHANNEL_ID (ARB-14)."""
+    @app_commands.describe(
+        market_type=(
+            "Market type to scan. Leave blank to scan all types (h2h, spreads, totals)."
+        )
+    )
+    @app_commands.choices(
+        market_type=[
+            app_commands.Choice(name="Moneyline (h2h)", value="h2h"),
+            app_commands.Choice(name="Spreads", value="spreads"),
+            app_commands.Choice(name="Totals (over/under)", value="totals"),
+        ]
+    )
+    async def scan(
+        self,
+        interaction: discord.Interaction,
+        market_type: Optional[app_commands.Choice[str]] = None,
+    ) -> None:
+        """Run an immediate scan and post results to ARB_CHANNEL_ID (ARB-14).
+
+        When market_type is provided, only that market is scanned and displayed.
+        Default (no argument) scans all market types.
+        """
         await interaction.response.defer(ephemeral=True)
+        market_filter = market_type.value if market_type is not None else None
         try:
-            arbs, evs = await self._run_scan()
+            arbs, evs = await self._run_scan(market_type_filter=market_filter)
+            scope = f"`{market_type.name}`" if market_type is not None else "all markets"
             await interaction.followup.send(
-                f"Scan complete. Found {len(arbs)} arb(s) and {len(evs)} +EV opportunity(ies).",
+                f"Scan complete ({scope}). "
+                f"Found {len(arbs)} arb(s) and {len(evs)} +EV opportunity(ies).",
                 ephemeral=True,
             )
         except Exception as exc:
