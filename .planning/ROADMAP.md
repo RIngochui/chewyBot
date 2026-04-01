@@ -118,3 +118,22 @@ Notes:
 
 Plans:
 - [ ] TBD (promote with /gsd:review-backlog when ready)
+
+### Phase 999.2: Multi-Server Support (BACKLOG)
+
+**Goal:** Refactor all single-guild hardcodes so the bot can run in multiple Discord servers with per-guild channel config and data partitioning
+**Requirements:** TBD
+**Plans:** 0 plans
+
+Notes:
+- Remove `copy_global_to` + guild-specific `tree.sync` in `bot.py:83-86` — sync globally instead
+- Replace 3 fixed channel ID scalars in `config.py` with a per-guild DB config table
+- Add `guild_id` column to all 7 DB tables (`arb_signals`, `ev_signals`, `parlays`, `parlay_legs`, `leg_type_weights`, `bot_config`, `odds_snapshots`) + migration
+- Replace all `get_channel(config.X_CHANNEL_ID)` calls across `arb.py`, `parlay.py`, `music.py`, `bot.py` with per-guild lookups
+- Fix reaction handler in `parlay.py:341` to check against registered parlay channels for any guild
+- Namespace TTS lang prefs as `guild_id:user_id` instead of `user_id` only
+- Add `/setup` command for guild admins to register their arb/parlay/log channels
+- Auto-scanner background tasks need to fan-out results per guild (or run once + broadcast to all registered channels)
+
+Plans:
+- [ ] TBD (promote with /gsd:review-backlog when ready)
