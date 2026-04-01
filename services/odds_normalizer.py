@@ -65,6 +65,8 @@ async def normalize(
             market_type = market["key"]
             for outcome in market.get("outcomes", []):
                 price = outcome["price"]
+                if not price or price <= 1.0:
+                    continue  # invalid odds — skip to avoid division by zero
                 market_key = f"{event_id}_{_slug(market_type)}_{_slug(outcome['name'])}"
 
                 records.append(

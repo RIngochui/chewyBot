@@ -9,6 +9,8 @@ def american_to_decimal(american_odds: int) -> float:
       positive: (american_odds / 100) + 1.0
       negative: (100 / abs(american_odds)) + 1.0
     """
+    if american_odds == 0:
+        raise ValueError("american_odds cannot be zero")
     if american_odds > 0:
         return (american_odds / 100) + 1.0
     else:
@@ -23,6 +25,8 @@ def decimal_to_american(decimal_odds: float) -> int:
       decimal >= 2.0: round((decimal_odds - 1) * 100)
       decimal <  2.0: round(-100 / (decimal_odds - 1))
     """
+    if decimal_odds <= 1.0:
+        raise ValueError(f"decimal_odds must be > 1.0, got {decimal_odds}")
     if decimal_odds >= 2.0:
         return round((decimal_odds - 1) * 100)
     else:
