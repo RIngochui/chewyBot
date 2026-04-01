@@ -287,6 +287,7 @@ class ArbCog(commands.Cog, name="Arbitrage"):
             value=str(quota) if quota is not None else "Unknown (mock mode)",
             inline=True,
         )
+        embed.add_field(name="Scanner Running", value="N/A — on-demand via /scan_arbs", inline=True)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
