@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Checkpoint: 04-04 Task 2 human-verify — awaiting smoke test"
-last_updated: "2026-04-01T03:40:07.792Z"
+stopped_at: Completed 04-04-PLAN.md — Phase 4 NBA Parlay AI complete
+last_updated: "2026-04-01T04:22:44.125Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 4
@@ -66,6 +66,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 04-nba-parlay-ai P01 | 106 | 2 tasks | 2 files |
 | Phase 04-nba-parlay-ai P02 | 187 | 2 tasks | 3 files |
 | Phase 04-nba-parlay-ai P03 | 177 | 1 tasks | 1 files |
+| Phase 04-nba-parlay-ai P04 | 10 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,8 @@ Recent decisions affecting current work:
 - [Phase 04-nba-parlay-ai]: Confidence = mean(leg_score * learned_leg_type_weight) * 100 clamped 0-100 (decision C)
 - [Phase 04-nba-parlay-ai]: tasks.loop default uses _dt module alias; change_interval() in __init__ applies PARLAY_POST_TIME with ET zoneinfo
 - [Phase 04-nba-parlay-ai]: parlay_history displays combined_odds as decimal multiplier (Nx) since parlay decimal odds always >1.0
+- [Phase 04-nba-parlay-ai]: DB-authoritative first-reaction-wins check: outcome != 'pending' is restart-safe; no in-memory set needed
+- [Phase 04-nba-parlay-ai]: Weight floor at 0.1 ensures leg types never reach zero weight and remain eligible for future parlays
 
 ### Pending Todos
 
@@ -122,6 +125,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T03:40:07.790Z
-Stopped at: Checkpoint: 04-04 Task 2 human-verify — awaiting smoke test
+Last session: 2026-04-01T04:22:44.123Z
+Stopped at: Completed 04-04-PLAN.md — Phase 4 NBA Parlay AI complete
 Resume file: None

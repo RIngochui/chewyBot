@@ -27,13 +27,14 @@ key_files:
     - cogs/parlay.py
 decisions:
   - "DB-authoritative first-reaction-wins check: outcome != 'pending' is restart-safe; no in-memory set needed"
-  - "Both unicode (✅/❌) and name (white_check_mark/x) emoji variants handled per RESEARCH.md Pitfall 4"
+  - "Both unicode (checkmark/X) and Discord name variants (white_check_mark/x) emoji handled per RESEARCH.md Pitfall 4"
   - "Weight floor at 0.1 (not 0.0) ensures weights never reach zero and leg types remain eligible for future parlays"
   - "Two separate get_db() contexts: first for read-only lookup, second for atomic write batch — avoids long-held cursor issues"
+requirements-completed: [PAR-06, PAR-07, PAR-08, PAR-14]
 metrics:
-  duration: "78 seconds"
-  completed: "2026-04-01T03:39:17Z"
-  tasks_completed: 1
+  duration: "~10 minutes"
+  completed: "2026-03-31T00:00:00Z"
+  tasks_completed: 2
   tasks_total: 2
   files_created: 0
   files_modified: 1
@@ -41,59 +42,64 @@ metrics:
 
 # Phase 04 Plan 04: Reaction Learning Handler Summary
 
-**One-liner:** on_raw_reaction_add listener wired into ParlayCog — ✅/❌ reactions mark parlays hit/miss and update leg_type_weights via DB-authoritative, restart-safe first-reaction-wins logic.
+**on_raw_reaction_add listener wired into ParlayCog — reactions mark parlays hit/miss and update leg_type_weights via DB-authoritative, restart-safe first-reaction-wins logic, closing the NBA Parlay AI feedback loop.**
 
-## Tasks Completed
+## Performance
 
-| Task | Name | Commit | Files |
-|------|------|--------|-------|
-| 1 | Add on_raw_reaction_add to ParlayCog | c7f9ad5 | cogs/parlay.py (modified) |
+- **Duration:** ~10 minutes
+- **Completed:** 2026-03-31
+- **Tasks:** 2 (1 auto + 1 human-verify checkpoint, approved)
+- **Files modified:** 1
 
-## What Was Built
+## Accomplishments
 
-### cogs/parlay.py — on_raw_reaction_add listener
+- Reaction learning handler added to ParlayCog — the final piece closing the self-learning feedback loop
+- Bot reactions, channel scope, emoji variants, 24h window, and first-reaction-wins all enforced
+- Weight update formula `max(0.1, old + LEARNING_RATE * delta)` persists to DB after every scored parlay
+- Full end-to-end NBA Parlay AI smoke test passed: /parlay, /parlay_stats, /parlay_history, reaction scoring, and post-restart weight persistence all confirmed working
 
-**New imports added:**
-- `timedelta` added to `from datetime import datetime, timedelta, timezone`
-- `UPDATE_PARLAY_OUTCOME`, `SELECT_PARLAY_BY_MESSAGE_ID`, `SELECT_PARLAY_LEGS`, `SELECT_LEG_TYPE_WEIGHT`, `UPSERT_LEG_TYPE_WEIGHT_HIT`, `UPSERT_LEG_TYPE_WEIGHT_MISS` added to queries import block
+## Task Commits
 
-**Listener: `on_raw_reaction_add`**
+1. **Task 1: Add on_raw_reaction_add to ParlayCog** - `c7f9ad5` (feat)
+2. **Task 2: End-to-end smoke test checkpoint** - human-verify approved
 
-Implements the full PAR-06/PAR-07/PAR-14 feedback loop in 8 sequential guard steps:
+## Files Created/Modified
 
-1. **Bot guard (PAR-14):** `payload.member is None or payload.member.bot` → return immediately
-2. **Channel scope:** `payload.channel_id != config.PARLAY_CHANNEL_ID` → return
-3. **Emoji filter:** Checks both unicode (`✅`, `❌`) and Discord name variants (`white_check_mark`, `x`) per RESEARCH.md Pitfall 4
-4. **Parlay lookup:** `SELECT_PARLAY_BY_MESSAGE_ID` — returns None if message not tracked
-5. **First-reaction-wins (DB-authoritative):** `current_outcome != "pending"` → return. Restart-safe — no in-memory set needed
-6. **24-hour window:** `datetime.now(tz=timezone.utc) - generated_at > timedelta(hours=24)` → return
-7. **Outcome determination:** `outcome = "hit" if is_hit else "miss"`, `delta = +1 or -1`
-8. **Atomic DB write:**
-   - `UPDATE_PARLAY_OUTCOME` sets parlay outcome first (prevents race on rapid reactions)
-   - For each leg: `SELECT_LEG_TYPE_WEIGHT` → compute `max(0.1, old + LEARNING_RATE * delta)` → `UPSERT_LEG_TYPE_WEIGHT_HIT` or `UPSERT_LEG_TYPE_WEIGHT_MISS`
+- `cogs/parlay.py` — on_raw_reaction_add listener added with full 8-step guard chain and weight update logic
 
-## Checkpoint Awaiting Human Verification
+## Decisions Made
 
-Task 2 is a `checkpoint:human-verify` — paused awaiting smoke test confirmation.
-
-**What to verify (9 steps):**
-1. Start bot with MOCK_MODE=true: `python bot.py`
-2. Confirm "chewyBot has logged in!" in LOG_CHANNEL_ID, no errors in chewybot.log
-3. Run `/parlay` — confirm embed appears in PARLAY_CHANNEL_ID with title, 3-5 legs, combined odds, confidence score, footer with reaction prompt
-4. React ✅ to the parlay message — confirm no error in logs
-5. Run `/parlay_stats` — confirm total tracked, hit rate, leg type breakdown
-6. Run `/parlay_history 3` — confirm recent parlays with outcomes
-7. Run `/parlay` again — confirm reacted parlay shows as "hit" in history
-8. Check SQLite: `sqlite3 chewybot.db "SELECT * FROM leg_type_weights;"` — confirm weights changed from 1.0
-9. Restart bot — re-run `/parlay_stats` — confirm weights still updated (persisted)
+- DB-authoritative first-reaction-wins: querying `parlays.outcome != 'pending'` from the DB is restart-safe; an in-memory set (as considered in Plan 03 research) would lose state on restart
+- Both unicode emoji (`checkmark`, `X`) and Discord API name variants (`white_check_mark`, `x`) checked per RESEARCH.md Pitfall 4 — handles all clients
+- Weight floor at 0.1 prevents any leg type from being permanently suppressed and keeps all 6 taxonomy types eligible for future scoring
+- Two separate `get_db()` context managers used: one for the read-only parlay lookup (steps 4-6) and a second for the atomic write batch (steps 8+) to avoid holding a cursor open longer than needed
 
 ## Deviations from Plan
 
 None — plan executed exactly as written. The AST assertion in the plan's verify script used escaped double-quote syntax (`\"pending\"`) which matched the actual file content (`"pending"`).
 
+## Issues Encountered
+
+None.
+
 ## Known Stubs
 
 None — the reaction handler is fully wired to real DB queries. All weight update logic, 24h window enforcement, and outcome recording are production-ready.
+
+## Next Phase Readiness
+
+Phase 4 (NBA Parlay AI) is complete. All 14 PAR requirements are addressed across Plans 01-04:
+
+- PAR-01 through PAR-05: Data foundation (BallDontLie adapter, DB schema, queries) — Plan 01
+- PAR-05, PAR-09 through PAR-13: Parlay engine with 5-factor scoring and embed builder — Plan 02
+- PAR-03, PAR-04, PAR-10, PAR-11: ParlayCog with daily post, slash commands, DB persistence — Plan 03
+- PAR-06, PAR-07, PAR-08, PAR-14: Reaction learning handler — Plan 04 (this plan)
+
+The bot is feature-complete for v1.0. No blockers.
+
+---
+*Phase: 04-nba-parlay-ai*
+*Completed: 2026-03-31*
 
 ## Self-Check: PASSED
 

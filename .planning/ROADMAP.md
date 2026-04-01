@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Bot entry point, config, database layer, logging, and all project deliverables (completed 2026-03-31)
 - [ ] **Phase 2: Voice & Community Cogs** - Music (yt-dlp), TTS (gTTS), and Emoji Proxy cogs
 - [x] **Phase 3: Arbitrage Scanner** - Adapter pattern, odds engine, arb/EV detection, auto-scan, all scanner commands (completed 2026-03-31)
-- [ ] **Phase 4: NBA Parlay AI** - balldontlie integration, parlay generation, learning system, parlay commands
+- [x] **Phase 4: NBA Parlay AI** - balldontlie integration, parlay generation, learning system, parlay commands (completed 2026-04-01)
 
 ## Phase Details
 
@@ -85,7 +85,7 @@ Plans:
 - [x] 04-01-PLAN.md — BallDontLie adapter (mock+live) + all parlay SQL constants in queries.py
 - [x] 04-02-PLAN.md — Parlay engine (5-factor scoring, leg selection) + build_parlay_embed()
 - [x] 04-03-PLAN.md — ParlayCog: daily task, /parlay, /parlay_stats, /parlay_history, DB persistence
-- [ ] 04-04-PLAN.md — Reaction handler + self-learning weight update system (PAR-06/07/08/14)
+- [x] 04-04-PLAN.md — Reaction handler + self-learning weight update system (PAR-06/07/08/14)
 
 ## Progress
 
@@ -97,4 +97,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Foundation | 3/3 | Complete   | 2026-03-31 |
 | 2. Voice & Community Cogs | 3/4 | In Progress|  |
 | 3. Arbitrage Scanner | 5/5 | Complete   | 2026-03-31 |
-| 4. NBA Parlay AI | 3/4 | In Progress|  |
+| 4. NBA Parlay AI | 4/4 | Complete   | 2026-04-01 |
