@@ -8,7 +8,7 @@
 ## Decisions
 
 ### A — leg_type taxonomy
-**Decision:** Medium taxonomy — 6 leg types.
+**Decision:** 6 team-based leg types (free API tier only).
 
 ```
 h2h_favorite    — moneyline, team is odds-on favorite
@@ -21,7 +21,7 @@ totals_under    — over/under, bet the under
 
 **Rationale:** At 1 parlay/day with 3–5 legs, ~30–50 leg samples/month. Broad enough to converge past the 20-parlay filter threshold; granular enough to learn something meaningful. Maps cleanly onto 5-factor model (home_away_split → spread_home/away, line_value → h2h_favorite/underdog).
 
-**Architecture note:** Taxonomy is designed to extend — player prop types (`player_points_over`, `player_assists_under`, etc.) can be added as new rows in `leg_type_weights` when player stats legs are implemented.
+**Why player props are deferred:** Player stat legs (points, threes, rebounds, assists) require balldontlie ALL-STAR+ (`Game Player Stats` endpoint) and The Odds API paid tier (player prop lines). Both are behind paywalls. Architecture supports extension — add new rows to `leg_type_weights` when ready to upgrade.
 
 ---
 
@@ -81,7 +81,7 @@ confidence = max(0, min(100, confidence))  # clamp to 0–100
 
 ## Deferred Ideas
 
-- **Player prop legs** — e.g., "LeBron over 25.5 pts". Requires balldontlie `/player_stats` endpoint and new leg_type entries. Architecture supports this — add as a future phase.
+- **Player prop legs** (points, threes, rebounds, assists) — Requires balldontlie ALL-STAR+ plan (`Game Player Stats` endpoint) + Odds API paid tier (player prop lines). Taxonomy extends cleanly: add `player_points_over/under`, `player_threes_over/under`, `player_rebounds_over/under`, `player_assists_over/under` to `leg_type_weights`. No defense stats needed.
 
 ---
 
