@@ -87,9 +87,24 @@ class EmojiCog(commands.Cog, name="Emoji"):
 
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        # Cache webhooks per channel to avoid creating duplicates
+        self._webhooks: dict[int, discord.Webhook] = {}
 
     async def cog_load(self) -> None:
         logger.info("EmojiCog loaded")
+
+    async def _get_webhook(self, channel: discord.TextChannel) -> discord.Webhook:
+        """Return a cached webhook for the channel, creating one if needed."""
+        if channel.id in self._webhooks:
+            return self._webhooks[channel.id]
+        # Reuse existing bot-owned webhook if present
+        for wh in await channel.webhooks():
+            if wh.user == self.bot.user:
+                self._webhooks[channel.id] = wh
+                return wh
+        wh = await channel.create_webhook(name="chewyBot Emoji Proxy")
+        self._webhooks[channel.id] = wh
+        return wh
 
     # ------------------------------------------------------------------
     # /emote [name] — EMO-01, EMO-05
@@ -123,10 +138,18 @@ class EmojiCog(commands.Cog, name="Emoji"):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
-        # Repost as clean message, then delete slash invocation (locked decision)
-        display_name = interaction.user.display_name
+        # Post via webhook as the user so it looks like they sent it
         await interaction.response.defer(ephemeral=True)
-        await interaction.channel.send(f"[{display_name}]: {emoji}")  # type: ignore[union-attr]
+        try:
+            webhook = await self._get_webhook(interaction.channel)  # type: ignore[arg-type]
+            await webhook.send(
+                str(emoji),
+                username=interaction.user.display_name,
+                avatar_url=interaction.user.display_avatar.url,
+            )
+        except Exception:
+            # Fallback: plain bot message if webhook fails
+            await interaction.channel.send(f"{interaction.user.display_name}: {emoji}")  # type: ignore[union-attr]
         await interaction.delete_original_response()
 
     # ------------------------------------------------------------------
