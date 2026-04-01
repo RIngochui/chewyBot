@@ -49,6 +49,7 @@ class Config(BaseSettings):
     PARLAY_LEARNING_RATE: float = 0.05
     TTS_INTERRUPTS_MUSIC: bool = False
     TTS_MAX_CHARS: int = 300
+    ENABLE_EV_SCAN: bool = False
     MOCK_MODE: bool = False
     ENABLED_SPORTS: str = "basketball_nba,americanfootball_nfl,icehockey_nhl"
 

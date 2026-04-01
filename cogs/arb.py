@@ -92,7 +92,7 @@ class ArbCog(commands.Cog, name="Arbitrage"):
                 all_normalized.extend(records)
 
         arb_signals = await detect_arb(all_normalized, self._min_arb_pct, self._bankroll)
-        ev_signals = await detect_ev(all_normalized, self._min_ev_pct)
+        ev_signals = await detect_ev(all_normalized, self._min_ev_pct) if config.ENABLE_EV_SCAN else []
 
         self._last_scan_at = datetime.now(tz=timezone.utc)
 
