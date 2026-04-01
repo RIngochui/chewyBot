@@ -101,9 +101,36 @@ def build_ev_embed(signal: EVSignal) -> discord.Embed:
 def build_parlay_embed(parlay: Parlay, post_date: str) -> discord.Embed:
     """Build a Discord embed for a daily NBA parlay post.
 
-    PAR-10: title "chewyBot's NBA Parlay [date]"
-    Fields: each leg (team, market type, line, American odds), combined odds, confidence score
+    PAR-10: title "chewyBot's NBA Parlay — [date]"
+    Fields: one field per leg (team, market type, line, American odds),
+            combined parlay odds (American format), confidence score 0-100.
+    Footer: reaction prompt to help the AI learn.
     Uses EMBED_COLOR = 0x2E7D32 (BOT-05)
     Phase 4 full implementation.
     """
-    raise NotImplementedError("build_parlay_embed() — implement in Phase 4")
+    from utils.odds_math import decimal_to_american
+
+    embed = discord.Embed(
+        title=f"chewyBot's NBA Parlay — {post_date}",
+        color=EMBED_COLOR,
+    )
+
+    # One field per leg
+    for i, leg in enumerate(parlay.legs, 1):
+        line_str = f" ({leg.line_value:+.1f})" if leg.line_value is not None else ""
+        odds_str = f"+{leg.american_odds}" if leg.american_odds > 0 else str(leg.american_odds)
+        embed.add_field(
+            name=f"Leg {i}: {leg.team}",
+            value=f"{leg.market_type.title()}{line_str} — {odds_str}",
+            inline=False,
+        )
+
+    # Combined parlay odds in American format
+    combined_american = decimal_to_american(parlay.combined_odds)
+    combined_str = f"+{combined_american}" if combined_american > 0 else str(combined_american)
+    embed.add_field(name="Combined Parlay Odds", value=combined_str, inline=True)
+    embed.add_field(name="Confidence", value=f"{parlay.confidence_score:.0f}/100", inline=True)
+
+    embed.set_footer(text="React \u2705 if this parlay hits, \u274c if it misses \u2014 helps the AI learn!")
+
+    return embed
