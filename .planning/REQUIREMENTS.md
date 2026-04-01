@@ -88,7 +88,7 @@
 ### NBA Parlay AI Cog
 
 - [x] **PAR-01**: Data from balldontlie API (no key) for team stats + recent results; The Odds API adapter reused for NBA lines
-- [ ] **PAR-02**: Auto-posts daily at PARLAY_POST_TIME (default 11:00 AM ET) to PARLAY_CHANNEL_ID
+- [x] **PAR-02**: Auto-posts daily at PARLAY_POST_TIME (default 11:00 AM ET) to PARLAY_CHANNEL_ID
 - [x] **PAR-03**: Generates 3–5 leg NBA parlay using 5-factor weighted scoring: recent_form (0.25), home_away_split (0.20), rest_days (0.15), line_value (0.25), historical_hit_rate (0.15)
 - [x] **PAR-04**: Never includes both sides of the same game; only includes legs with leg_score >= MIN_LEG_SCORE (default 0.5)
 - [x] **PAR-05**: Every posted parlay saved to SQLite with all legs, metadata, Discord message_id
@@ -97,9 +97,9 @@
 - [ ] **PAR-08**: After 20+ tracked parlays, filters out leg types with historical hit rate < 30%
 - [x] **PAR-09**: All weights persist in leg_type_weights table, survive restarts
 - [x] **PAR-10**: Parlay embed: title "🏀 chewyBot's NBA Parlay — [date]", each leg (team, market type, line, American odds), combined parlay odds, confidence score 0–100, reaction prompt
-- [ ] **PAR-11**: /parlay — manually generate today's parlay
-- [ ] **PAR-12**: /parlay_stats — hit rate, total tracked, best/worst leg types
-- [ ] **PAR-13**: /parlay_history [n] — last n parlays with hit/miss/pending outcome
+- [x] **PAR-11**: /parlay — manually generate today's parlay
+- [x] **PAR-12**: /parlay_stats — hit rate, total tracked, best/worst leg types
+- [x] **PAR-13**: /parlay_history [n] — last n parlays with hit/miss/pending outcome
 - [ ] **PAR-14**: Reaction handling: first valid ✅/❌ per parlay wins; ignores bot's own reactions; only tracks reactions on chewyBot messages
 
 ### Deliverables
@@ -207,7 +207,7 @@
 | ARB-21 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-22 | Phase 3 — Arbitrage Scanner | Complete |
 | PAR-01 | Phase 4 — NBA Parlay AI | Complete |
-| PAR-02 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-02 | Phase 4 — NBA Parlay AI | Complete |
 | PAR-03 | Phase 4 — NBA Parlay AI | Pending |
 | PAR-04 | Phase 4 — NBA Parlay AI | Pending |
 | PAR-05 | Phase 4 — NBA Parlay AI | Complete |
@@ -216,9 +216,9 @@
 | PAR-08 | Phase 4 — NBA Parlay AI | Pending |
 | PAR-09 | Phase 4 — NBA Parlay AI | Complete |
 | PAR-10 | Phase 4 — NBA Parlay AI | Pending |
-| PAR-11 | Phase 4 — NBA Parlay AI | Pending |
-| PAR-12 | Phase 4 — NBA Parlay AI | Pending |
-| PAR-13 | Phase 4 — NBA Parlay AI | Pending |
+| PAR-11 | Phase 4 — NBA Parlay AI | Complete |
+| PAR-12 | Phase 4 — NBA Parlay AI | Complete |
+| PAR-13 | Phase 4 — NBA Parlay AI | Complete |
 | PAR-14 | Phase 4 — NBA Parlay AI | Pending |
 
 **Coverage:**
