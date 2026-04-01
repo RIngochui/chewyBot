@@ -193,3 +193,105 @@ UPDATE_BOT_CONFIG: str = """
     INSERT INTO bot_config (key, value) VALUES (?, ?)
     ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
 """
+
+# ------------------------------------------------------------------ #
+# DML — Parlay persistence (Phase 4)                                  #
+# ------------------------------------------------------------------ #
+
+INSERT_PARLAY: str = """
+    INSERT INTO parlays (combined_odds, confidence_score, leg_count, generated_at)
+    VALUES (?, ?, ?, ?)
+"""
+
+UPDATE_PARLAY_MESSAGE_ID: str = """
+    UPDATE parlays SET discord_message_id = ? WHERE id = ?
+"""
+
+UPDATE_PARLAY_OUTCOME: str = """
+    UPDATE parlays SET outcome = ? WHERE id = ?
+"""
+
+INSERT_PARLAY_LEG: str = """
+    INSERT INTO parlay_legs (parlay_id, team, market_type, line_value, american_odds, leg_score, leg_type)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+"""
+
+SELECT_PARLAY_BY_MESSAGE_ID: str = """
+    SELECT id, generated_at, outcome FROM parlays WHERE discord_message_id = ?
+"""
+
+SELECT_PARLAY_LEGS: str = """
+    SELECT leg_type, leg_score FROM parlay_legs WHERE parlay_id = ?
+"""
+
+SELECT_LATEST_PARLAYS: str = """
+    SELECT id, generated_at, combined_odds, confidence_score, outcome, leg_count
+    FROM parlays ORDER BY generated_at DESC LIMIT ?
+"""
+
+SELECT_PARLAY_WITH_LEGS: str = """
+    SELECT p.id, p.generated_at, p.combined_odds, p.confidence_score, p.outcome, p.leg_count,
+           pl.team, pl.market_type, pl.line_value, pl.american_odds, pl.leg_score, pl.leg_type
+    FROM parlays p
+    JOIN parlay_legs pl ON pl.parlay_id = p.id
+    WHERE p.id = ?
+"""
+
+SELECT_PARLAY_COUNT: str = """
+    SELECT COUNT(*) FROM parlays WHERE outcome != 'pending'
+"""
+
+# ------------------------------------------------------------------ #
+# DML — Leg type weight persistence (Phase 4)                         #
+# ------------------------------------------------------------------ #
+
+SEED_LEG_TYPE_WEIGHTS: str = """
+    INSERT INTO leg_type_weights (leg_type, weight, hit_count, miss_count)
+    VALUES (?, 1.0, 0, 0)
+    ON CONFLICT(leg_type) DO NOTHING
+"""
+
+SELECT_ALL_LEG_TYPE_WEIGHTS: str = """
+    SELECT leg_type, weight, hit_count, miss_count FROM leg_type_weights
+"""
+
+SELECT_LEG_TYPE_WEIGHT: str = """
+    SELECT weight, hit_count, miss_count FROM leg_type_weights WHERE leg_type = ?
+"""
+
+UPSERT_LEG_TYPE_WEIGHT_HIT: str = """
+    INSERT INTO leg_type_weights (leg_type, weight, hit_count, miss_count)
+    VALUES (?, ?, 1, 0)
+    ON CONFLICT(leg_type) DO UPDATE SET
+        weight = excluded.weight,
+        hit_count = hit_count + 1,
+        updated_at = CURRENT_TIMESTAMP
+"""
+
+UPSERT_LEG_TYPE_WEIGHT_MISS: str = """
+    INSERT INTO leg_type_weights (leg_type, weight, hit_count, miss_count)
+    VALUES (?, ?, 0, 1)
+    ON CONFLICT(leg_type) DO UPDATE SET
+        weight = excluded.weight,
+        miss_count = miss_count + 1,
+        updated_at = CURRENT_TIMESTAMP
+"""
+
+SELECT_LOW_HIT_RATE_LEG_TYPES: str = """
+    SELECT leg_type FROM leg_type_weights
+    WHERE (hit_count + miss_count) > 0
+      AND CAST(hit_count AS REAL) / (hit_count + miss_count) < 0.3
+"""
+
+# ------------------------------------------------------------------ #
+# DML — Parlay stats queries (Phase 4)                                #
+# ------------------------------------------------------------------ #
+
+SELECT_PARLAY_STATS: str = """
+    SELECT
+        COUNT(*) as total_tracked,
+        SUM(CASE WHEN outcome = 'hit' THEN 1 ELSE 0 END) as total_hits,
+        SUM(CASE WHEN outcome = 'miss' THEN 1 ELSE 0 END) as total_misses
+    FROM parlays
+    WHERE outcome != 'pending'
+"""
