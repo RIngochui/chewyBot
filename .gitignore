@@ -1,8 +1,36 @@
-.venv/
-__pycache__/
-*.pyc
-.env
-*.log
-*.db
+# Python                                                                                                                                        
+__pycache__/                                                                                                                                    
+*.py[cod]                                                                                                                                       
+*.pyo                                                                                                                                           
+.venv/                               
+venv/
 
+# Env
+.env
+.env.*
+
+# DB
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Audio cache (yt-dlp downloads)
+downloads/
+*.mp3
+*.webm
+*.m4a
+
+# Claude
 .claude/
