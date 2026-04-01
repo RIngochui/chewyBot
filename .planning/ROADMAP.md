@@ -108,9 +108,13 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 **Plans:** 0 plans
 
 Notes:
-- Use `nba_api` (free, no key) for player game logs, recent form, and season averages
-- Use The Odds API `player_props` market type for actual prop lines + odds
+- **BallDontLie** — player game logs, season averages, historical depth (key required, already integrated)
+- **ESPN unofficial API** — live scores, box scores, injury/questionable status, roster info (no key, undocumented — treat as best-effort)
+- **nba_api / stats.nba.com** — advanced metrics, deep historical stats (no key, rate-limits hard)
+- **The Odds API `player_props` market** — actual prop lines + odds (already integrated)
+- ESPN injury data is high-value alpha for prop confidence (questionable/out status)
 - Add player prop leg type to the existing weight learning system
+- ESPN endpoint stability risk — build with fallback so engine degrades gracefully if ESPN changes
 
 Plans:
 - [ ] TBD (promote with /gsd:review-backlog when ready)
