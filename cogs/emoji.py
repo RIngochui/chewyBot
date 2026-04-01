@@ -110,10 +110,10 @@ class EmojiCog(commands.Cog, name="Emoji"):
     # /emote [name] — EMO-01, EMO-05
     # ------------------------------------------------------------------
 
-    @app_commands.command(name="emote", description="Post a server emoji as a message")
-    @app_commands.describe(name="Emoji name to post")
-    async def emote(self, interaction: discord.Interaction, name: str) -> None:
-        """Reposts a server emoji as '[Username]: <emoji>' and deletes the slash invocation."""
+    @app_commands.command(name="emote", description="Post a server emoji, optionally with text")
+    @app_commands.describe(name="Emoji name to post", text="Optional text to send before the emoji")
+    async def emote(self, interaction: discord.Interaction, name: str, text: str = "") -> None:
+        """Posts emoji via webhook as the user, with optional preceding text."""
         emoji_map = {e.name: e for e in interaction.guild.emojis}  # type: ignore[union-attr]
 
         if name in emoji_map:
@@ -142,14 +142,16 @@ class EmojiCog(commands.Cog, name="Emoji"):
         await interaction.response.defer(ephemeral=True)
         try:
             webhook = await self._get_webhook(interaction.channel)  # type: ignore[arg-type]
+            content = f"{text} {emoji}".strip() if text else str(emoji)
             await webhook.send(
-                str(emoji),
+                content,
                 username=interaction.user.display_name,
                 avatar_url=interaction.user.display_avatar.url,
             )
         except Exception:
             # Fallback: plain bot message if webhook fails
-            await interaction.channel.send(f"{interaction.user.display_name}: {emoji}")  # type: ignore[union-attr]
+            content = f"{text} {emoji}".strip() if text else str(emoji)
+            await interaction.channel.send(content)  # type: ignore[union-attr]
         await interaction.delete_original_response()
 
     # ------------------------------------------------------------------
