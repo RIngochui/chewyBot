@@ -116,6 +116,7 @@ async def detect_arb(
                 selection_a=sel_a,
                 selection_b=sel_b,
                 detected_at=datetime.utcnow(),
+                game_time=records[0].start_time,
             ))
 
     return signals
@@ -197,6 +198,7 @@ async def detect_ev(
                     fair_probability=round(fair_prob, 6),
                     ev_pct=round(ev_pct, 4),
                     detected_at=datetime.utcnow(),
+                    game_time=rec.start_time,
                 ))
 
     return signals

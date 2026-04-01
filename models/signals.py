@@ -1,5 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -24,6 +25,7 @@ class ArbSignal(BaseModel):
     selection_a: str
     selection_b: str
     detected_at: datetime = Field(default_factory=datetime.utcnow)
+    game_time: Optional[datetime] = None
 
 
 class EVSignal(BaseModel):
@@ -42,3 +44,4 @@ class EVSignal(BaseModel):
     fair_probability: float
     ev_pct: float
     detected_at: datetime = Field(default_factory=datetime.utcnow)
+    game_time: Optional[datetime] = None

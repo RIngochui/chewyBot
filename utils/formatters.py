@@ -1,5 +1,6 @@
 from __future__ import annotations
 import discord
+from zoneinfo import ZoneInfo
 from config import EMBED_COLOR
 from models.signals import ArbSignal, EVSignal
 from models.parlay import Parlay
@@ -20,6 +21,9 @@ def build_arb_embed(signal: ArbSignal) -> discord.Embed:
     )
     embed.add_field(name="Sport", value=signal.sport, inline=True)
     embed.add_field(name="Event", value=signal.event_name, inline=True)
+    if signal.game_time is not None:
+        et = signal.game_time.astimezone(ZoneInfo("America/New_York"))
+        embed.add_field(name="Game Date", value=et.strftime("%-I:%M %p ET, %a %b %-d %Y"), inline=True)
     embed.add_field(name="Market", value=signal.market_type, inline=True)
     embed.add_field(
         name="Side A",
@@ -71,6 +75,9 @@ def build_ev_embed(signal: EVSignal) -> discord.Embed:
     )
     embed.add_field(name="Sport", value=signal.sport, inline=True)
     embed.add_field(name="Event", value=signal.event_name, inline=True)
+    if signal.game_time is not None:
+        et = signal.game_time.astimezone(ZoneInfo("America/New_York"))
+        embed.add_field(name="Game Date", value=et.strftime("%-I:%M %p ET, %a %b %-d %Y"), inline=True)
     embed.add_field(name="Market", value=signal.market_type, inline=True)
     embed.add_field(name="Outcome", value=signal.selection_name, inline=True)
     embed.add_field(name="Book", value=signal.book_name, inline=True)
