@@ -69,13 +69,13 @@
 - [x] **ARB-05**: API quota remaining tracked from response headers, exposed via /status command
 - [x] **ARB-06**: Odds normalized to canonical schema: sport, league, event_name, home_team, away_team, start_time, market_type, selection_name, line_value, decimal_odds, american_odds, book_name, fetched_at, event_id, market_key
 - [x] **ARB-07**: event_id slugified as "{home_team}_{away_team}_{date}"; market_key as "{event_id}_{market_type}_{selection_name}"
-- [ ] **ARB-08**: Arb detection: sum(1/best_odds) < 1.0 → arb exists; calculates arb_pct, stake per side, estimated profit
-- [ ] **ARB-09**: MIN_ARB_PCT threshold filters noise (default 0.5%); deduplication skips re-alerting same market_key unless arb_pct improves by >0.2%
-- [ ] **ARB-10**: +EV detection: no_vig_probability() on consensus line; EV% = ((offered_decimal * fair_prob) - 1) * 100; MIN_EV_PCT threshold (default 2.0%)
+- [x] **ARB-08**: Arb detection: sum(1/best_odds) < 1.0 → arb exists; calculates arb_pct, stake per side, estimated profit
+- [x] **ARB-09**: MIN_ARB_PCT threshold filters noise (default 0.5%); deduplication skips re-alerting same market_key unless arb_pct improves by >0.2%
+- [x] **ARB-10**: +EV detection: no_vig_probability() on consensus line; EV% = ((offered_decimal * fair_prob) - 1) * 100; MIN_EV_PCT threshold (default 2.0%)
 - [x] **ARB-11**: Math helpers in utils/odds_math.py: american_to_decimal, decimal_to_american, implied_probability, no_vig_probability
-- [x] **ARB-12**: Auto-scanner loop runs every SCAN_INTERVAL_SECONDS (default 60s), posts alerts to ARB_CHANNEL_ID
+- [x] **ARB-12**: Auto-scanner loop — replaced with on-demand /scan_arbs (accepted deviation, human-approved)
 - [x] **ARB-13**: /ping — bot latency
-- [x] **ARB-14**: /scan — trigger manual scan
+- [x] **ARB-14**: /scan_arbs — trigger manual scan
 - [x] **ARB-15**: /latest_arbs — last 5 arb alerts as embeds
 - [x] **ARB-16**: /latest_ev — last 5 EV alerts as embeds
 - [x] **ARB-17**: /set_bankroll [amount], /set_min_arb [pct], /set_min_ev [pct] — update runtime config
@@ -191,9 +191,9 @@
 | ARB-05 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-06 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-07 | Phase 3 — Arbitrage Scanner | Complete |
-| ARB-08 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-09 | Phase 3 — Arbitrage Scanner | Pending |
-| ARB-10 | Phase 3 — Arbitrage Scanner | Pending |
+| ARB-08 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-09 | Phase 3 — Arbitrage Scanner | Complete |
+| ARB-10 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-11 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-12 | Phase 3 — Arbitrage Scanner | Complete |
 | ARB-13 | Phase 3 — Arbitrage Scanner | Complete |
