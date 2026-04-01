@@ -52,6 +52,8 @@ class Config(BaseSettings):
     ENABLE_EV_SCAN: bool = False
     MOCK_MODE: bool = False
     ENABLED_SPORTS: str = "basketball_nba,americanfootball_nfl,icehockey_nhl"
+    ARB_LOOKBACK_HOURS: float = 2.0   # Drop events whose start_time < now - this many hours
+    ARB_LOOKAHEAD_HOURS: float = 24.0 # Drop events whose start_time > now + this many hours
 
     def get_enabled_sports_list(self) -> list[str]:
         """Return ENABLED_SPORTS as a list by splitting on commas."""

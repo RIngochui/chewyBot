@@ -106,6 +106,18 @@ class ArbCog(commands.Cog, name="Arbitrage"):
                 )
                 all_normalized.extend(records)
 
+        # Drop events outside the actionable time window (ARB-FILTER).
+        # Lookback: allow in-progress games up to ARB_LOOKBACK_HOURS ago.
+        # Lookahead: ignore games more than ARB_LOOKAHEAD_HOURS in the future.
+        from datetime import timedelta as _td
+        _now = datetime.now(timezone.utc)
+        _lo = _now - _td(hours=config.ARB_LOOKBACK_HOURS)
+        _hi = _now + _td(hours=config.ARB_LOOKAHEAD_HOURS)
+        all_normalized = [
+            r for r in all_normalized
+            if _lo <= r.start_time <= _hi
+        ]
+
         # Apply market_type filter after normalization (belt-and-suspenders —
         # in case the API returns extra market types despite the request filter).
         filtered = (
