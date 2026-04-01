@@ -33,7 +33,7 @@ class OddsApiAdapter(SportsbookAdapter):
     """
 
     BASE_URL: str = "https://api.the-odds-api.com/v4"
-    SUPPORTED_BOOKS: list[str] = ["fanduel", "draftkings", "betmgm", "bet365"]
+    SUPPORTED_BOOKS: list[str] = ["fanduel", "bet365", "espnbet"]
 
     def __init__(self, api_key: str, mock_mode: bool = False) -> None:
         self.api_key = api_key

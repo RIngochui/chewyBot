@@ -35,7 +35,8 @@
       "Bash(grep -h ARB- .planning/phases/03-arbitrage-scanner/*-PLAN.md)",
       "Bash(.venv/bin/python -m pytest utils/test_odds_math.py services/test_arb_detector.py -q)",
       "Bash(pip install:*)",
-      "Bash(.venv/bin/pip install:*)"
+      "Bash(.venv/bin/pip install:*)",
+      "Bash(.venv/bin/pip freeze:*)"
     ]
   }
 }
