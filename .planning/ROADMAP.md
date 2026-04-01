@@ -98,3 +98,19 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 2. Voice & Community Cogs | 3/4 | In Progress|  |
 | 3. Arbitrage Scanner | 5/5 | Complete   | 2026-03-31 |
 | 4. NBA Parlay AI | 4/4 | Complete   | 2026-04-01 |
+
+## Backlog
+
+### Phase 999.1: Player Props Parlay Legs (BACKLOG)
+
+**Goal:** Extend the parlay engine to support player prop legs (e.g. LeBron over 25.5 pts) with confidence scoring driven by real player data
+**Requirements:** TBD
+**Plans:** 0 plans
+
+Notes:
+- Use `nba_api` (free, no key) for player game logs, recent form, and season averages
+- Use The Odds API `player_props` market type for actual prop lines + odds
+- Add player prop leg type to the existing weight learning system
+
+Plans:
+- [ ] TBD (promote with /gsd:review-backlog when ready)
