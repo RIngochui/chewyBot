@@ -89,14 +89,14 @@
 
 - [x] **PAR-01**: Data from balldontlie API (no key) for team stats + recent results; The Odds API adapter reused for NBA lines
 - [ ] **PAR-02**: Auto-posts daily at PARLAY_POST_TIME (default 11:00 AM ET) to PARLAY_CHANNEL_ID
-- [ ] **PAR-03**: Generates 3–5 leg NBA parlay using 5-factor weighted scoring: recent_form (0.25), home_away_split (0.20), rest_days (0.15), line_value (0.25), historical_hit_rate (0.15)
-- [ ] **PAR-04**: Never includes both sides of the same game; only includes legs with leg_score >= MIN_LEG_SCORE (default 0.5)
+- [x] **PAR-03**: Generates 3–5 leg NBA parlay using 5-factor weighted scoring: recent_form (0.25), home_away_split (0.20), rest_days (0.15), line_value (0.25), historical_hit_rate (0.15)
+- [x] **PAR-04**: Never includes both sides of the same game; only includes legs with leg_score >= MIN_LEG_SCORE (default 0.5)
 - [x] **PAR-05**: Every posted parlay saved to SQLite with all legs, metadata, Discord message_id
 - [ ] **PAR-06**: ✅ reaction → marks HIT, increases weights; ❌ reaction → marks MISS, decreases weights
 - [ ] **PAR-07**: Weight update: new_weight = old_weight + (PARLAY_LEARNING_RATE * delta), delta ±1; PARLAY_LEARNING_RATE default 0.05
 - [ ] **PAR-08**: After 20+ tracked parlays, filters out leg types with historical hit rate < 30%
 - [x] **PAR-09**: All weights persist in leg_type_weights table, survive restarts
-- [ ] **PAR-10**: Parlay embed: title "🏀 chewyBot's NBA Parlay — [date]", each leg (team, market type, line, American odds), combined parlay odds, confidence score 0–100, reaction prompt
+- [x] **PAR-10**: Parlay embed: title "🏀 chewyBot's NBA Parlay — [date]", each leg (team, market type, line, American odds), combined parlay odds, confidence score 0–100, reaction prompt
 - [ ] **PAR-11**: /parlay — manually generate today's parlay
 - [ ] **PAR-12**: /parlay_stats — hit rate, total tracked, best/worst leg types
 - [ ] **PAR-13**: /parlay_history [n] — last n parlays with hit/miss/pending outcome

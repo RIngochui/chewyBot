@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-nba-parlay-ai-04-01-PLAN.md
-last_updated: "2026-04-01T03:25:34.545Z"
-last_activity: 2026-04-01
+stopped_at: Completed 04-nba-parlay-ai-04-02-PLAN.md
+last_updated: "2026-03-31T00:04:00Z"
+last_activity: 2026-03-31
 progress:
   total_phases: 4
   completed_phases: 3
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 ## Current Position
 
 Phase: 4
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-04-01
+Plan: 02 complete, 03 next
+Status: Executing
+Last activity: 2026-03-31
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -64,6 +64,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-arbitrage-scanner P03 | 2 | 1 tasks | 2 files |
 | Phase 03-arbitrage-scanner P05 | 3 | 2 tasks | 2 files |
 | Phase 04-nba-parlay-ai P01 | 106 | 2 tasks | 2 files |
+| Phase 04-nba-parlay-ai P02 | 187 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,9 @@ Recent decisions affecting current work:
 - [Phase 03-arbitrage-scanner]: ArbCog._run_scan() is single private method for full pipeline — used by both auto_scan loop and /scan command
 - [Phase 04-nba-parlay-ai]: Mock mode uses mock file keys: recent_games (games) and team_stats (season averages) per actual mock/balldontlie_sample.json structure
 - [Phase 04-nba-parlay-ai]: BallDontLieAdapter uses /team_season_averages/general endpoint (not /team_stats — does not exist in free tier)
+- [Phase 04-nba-parlay-ai]: generate_parlay() _find_team_id() uses first available team_id as best-effort proxy — no extra /teams API call needed
+- [Phase 04-nba-parlay-ai]: Totals legs use home_team_id as scoring proxy — no team-specific data for O/U outcomes
+- [Phase 04-nba-parlay-ai]: Confidence = mean(leg_score * learned_leg_type_weight) * 100 clamped 0-100 (decision C)
 
 ### Pending Todos
 
@@ -115,6 +119,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T03:25:31.512Z
-Stopped at: Completed 04-nba-parlay-ai-04-01-PLAN.md
+Last session: 2026-03-31T00:04:00Z
+Stopped at: Completed 04-nba-parlay-ai-04-02-PLAN.md
 Resume file: None
