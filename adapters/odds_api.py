@@ -124,7 +124,8 @@ class OddsApiAdapter(SportsbookAdapter):
         if self.mock_mode:
             mock_path = Path("mock") / "odds_api_sample.json"
             with open(mock_path) as f:
-                return json.load(f)  # type: ignore[no-any-return]
+                events = json.load(f)
+            return [e for e in events if e.get("sport_key") == sport_key]
 
         url = f"{self.BASE_URL}/sports/{sport_key}/odds"
         params: dict[str, Any] = {
