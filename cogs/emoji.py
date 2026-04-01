@@ -211,14 +211,14 @@ class EmojiCog(commands.Cog, name="Emoji"):
 
         # Format validation — check Content-Type header (EMO-02)
         content_type = response.headers.get("content-type", "").lower()
-        allowed_types = {"image/png", "image/jpeg", "image/jpg", "image/gif"}
+        allowed_types = {"image/png", "image/jpeg", "image/jpg", "image/gif", "image/avif"}
         # Strip parameters like "; charset=utf-8"
         mime = content_type.split(";")[0].strip()
         if mime not in allowed_types:
             await interaction.followup.send(
                 embed=discord.Embed(
                     title="Invalid Format",
-                    description="Image must be PNG, JPG, or GIF.",
+                    description="Image must be PNG, JPG, GIF, or AVIF.",
                     color=EMBED_COLOR,
                 ),
                 ephemeral=True,
@@ -261,7 +261,7 @@ class EmojiCog(commands.Cog, name="Emoji"):
         await interaction.followup.send(
             embed=discord.Embed(
                 title="Emoji Added",
-                description=f"Added {emoji.mention} as `:{emoji.name}:`",
+                description=f"Added <:{emoji.name}:{emoji.id}> as `:{emoji.name}:`",
                 color=EMBED_COLOR,
             )
         )
