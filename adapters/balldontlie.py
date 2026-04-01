@@ -38,9 +38,10 @@ class BallDontLieAdapter:
 
     BASE_URL: str = "https://api.balldontlie.io/v1"
 
-    def __init__(self, mock_mode: bool = False) -> None:
+    def __init__(self, mock_mode: bool = False, api_key: str | None = None) -> None:
         self.mock_mode = mock_mode
-        self._client = httpx.AsyncClient(timeout=10.0)
+        headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
+        self._client = httpx.AsyncClient(timeout=10.0, headers=headers)
 
     # ------------------------------------------------------------------
     # Private helpers

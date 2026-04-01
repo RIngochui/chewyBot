@@ -318,7 +318,7 @@ async def generate_parlay(
     recent_games: list[dict] = []
     team_stats_lookup: dict[int, dict] = {}
 
-    bdl = BallDontLieAdapter(mock_mode=config.MOCK_MODE)
+    bdl = BallDontLieAdapter(mock_mode=config.MOCK_MODE, api_key=config.BALLDONTLIE_API_KEY)
     try:
         recent_games = await bdl.get_games(dates=[today_str], seasons=[season])
         logger.info("generate_parlay: fetched %d games from balldontlie", len(recent_games))
