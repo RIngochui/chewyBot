@@ -41,7 +41,7 @@ None — discussion stayed within phase scope.
 |----|-------------|------------------|
 | BOT-01 | Bot entry point (bot.py) loads all cogs independently — one cog failing never crashes others | Covered in "Cog Loading with Error Isolation" pattern |
 | BOT-02 | config.py loads all secrets from .env via pydantic-settings and exposes a typed Config object | Covered in "Pydantic-Settings v2 Configuration Pattern" |
-| BOT-03 | Bot displays status "chewyBot is online 🐾" on ready and posts "chewyBot has logged in!" to LOG_CHANNEL_ID | Covered in "Discord.py Ready Hook and Status" |
+| BOT-03 | Bot displays status "chewyBot is online!" on ready and posts "chewyBot has logged in!" to LOG_CHANNEL_ID | Covered in "Discord.py Ready Hook and Status" |
 | BOT-04 | Logging writes to chewybot.log file AND Discord LOG_CHANNEL_ID using Python logging module | Covered in "Async Discord Logging Handler" |
 | BOT-05 | All embeds use a consistent color scheme across all cogs (not default blurple) | Discretion item; document chosen hex value in code |
 | BOT-06 | Full type hints on every function throughout the codebase | Standard Python practice; no special research needed |
@@ -432,7 +432,7 @@ class ChewyBot(commands.Bot):
         await self.change_presence(
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
-                name="chewyBot is online 🐾"
+                name="chewyBot is online!"
             )
         )
 

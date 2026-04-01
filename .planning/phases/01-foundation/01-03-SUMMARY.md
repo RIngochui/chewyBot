@@ -80,7 +80,7 @@ files_modified: 1
 
 - `ChewyBot(commands.Bot)` with proper intents (message_content, reactions, voice_states)
 - `setup_hook()`: calls `init_db()`, loads all 5 cogs in an error-isolating try-except loop, copies global commands to guild and syncs
-- `on_ready()`: sets "chewyBot is online 🐾" status, posts "chewyBot has logged in!" to LOG_CHANNEL_ID
+- `on_ready()`: sets "chewyBot is online!" status, posts "chewyBot has logged in!" to LOG_CHANNEL_ID
 - `main()`: creates bot, calls `setup_logging()`, retries Discord connection 3x with exponential backoff (2**attempt seconds)
 
 Each of the 5 cog stubs (music, tts, emoji, arb, parlay) follows the same pattern: a `Cog` class with `__init__(bot)` and `async cog_load()`, plus an `async def setup(bot)` coroutine. No feature logic is implemented — that comes in Phases 2-4.

@@ -18,7 +18,7 @@ Reliably surface sports arbitrage and +EV opportunities to the Discord channel �
 - [x] SQLite storage with abstraction layer structured for easy PostgreSQL swap (connection + driver change only)
 - [x] All SQL in database/queries.py — zero inline SQL anywhere else
 - [x] Logging to file (chewybot.log) + Discord LOG_CHANNEL_ID using Python logging module
-- [x] Bot status: "chewyBot is online 🐾" on ready; log channel message: "chewyBot has logged in!"
+- [x] Bot status: "chewyBot is online!" on ready; log channel message: "chewyBot has logged in!"
 - [x] Consistent embed color scheme across all cogs (not default blurple)
 
 **Database Schema** (Validated in Phase 1: Foundation)
@@ -45,7 +45,7 @@ Reliably surface sports arbitrage and +EV opportunities to the Discord channel �
 - [ ] SQLite storage with abstraction layer structured for easy PostgreSQL swap (connection + driver change only)
 - [ ] All SQL in database/queries.py — zero inline SQL anywhere else
 - [ ] Logging to file (chewybot.log) + Discord LOG_CHANNEL_ID using Python logging module
-- [ ] Bot status: "chewyBot is online 🐾" on ready; log channel message: "chewyBot has logged in!"
+- [ ] Bot status: "chewyBot is online!" on ready; log channel message: "chewyBot has logged in!"
 - [ ] Consistent embed color scheme across all cogs (not default blurple)
 
 **Cog 1 — Music (cogs/music.py)** (Validated in Phase 2: Voice & Community Cogs)

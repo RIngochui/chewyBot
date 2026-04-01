@@ -9,7 +9,7 @@
 
 - [x] **BOT-01**: Bot entry point (bot.py) loads all cogs independently — one cog failing never crashes others
 - [x] **BOT-02**: config.py loads all secrets from .env via pydantic-settings and exposes a typed Config object
-- [x] **BOT-03**: Bot displays status "chewyBot is online 🐾" on ready and posts "chewyBot has logged in!" to LOG_CHANNEL_ID
+- [x] **BOT-03**: Bot displays status "chewyBot is online!" on ready and posts "chewyBot has logged in!" to LOG_CHANNEL_ID
 - [x] **BOT-04**: Logging writes to chewybot.log file AND Discord LOG_CHANNEL_ID using Python logging module
 - [x] **BOT-05**: All embeds use a consistent color scheme across all cogs (not default blurple)
 - [x] **BOT-06**: Full type hints on every function throughout the codebase

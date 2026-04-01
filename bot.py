@@ -92,7 +92,7 @@ class ChewyBot(commands.Bot):
         """
         # Set bot status (BOT-03)
         await self.change_presence(
-            activity=discord.CustomActivity(name="chewyBot is online 🐾")
+            activity=discord.CustomActivity(name="chewyBot is online!")
         )
         logger.info(
             "Logged in as %s (ID: %s)",

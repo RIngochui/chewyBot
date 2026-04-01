@@ -87,7 +87,7 @@ On first run, you should see (in your terminal and `chewybot.log`):
 2026-03-30 11:00:00 [INFO] __main__: Logged in as chewyBot#1234 (ID: ...)
 ```
 
-Your log channel will receive `chewyBot has logged in!` and the bot's status will show **chewyBot is online 🐾**. Slash commands appear instantly (guild-scoped sync, no 1-hour global delay).
+Your log channel will receive `chewyBot has logged in!` and the bot's status will show **chewyBot is online!**. Slash commands appear instantly (guild-scoped sync, no 1-hour global delay).
 
 ## Command Reference
 

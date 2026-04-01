@@ -63,7 +63,7 @@ Phase 1 delivers the complete bot skeleton: entry point (bot.py) that loads all 
 <specifics>
 ## Specific Ideas
 
-- Bot status: "chewyBot is online 🐾" (from spec)
+- Bot status: "chewyBot is online!" (from spec)
 - Log channel ready message: "chewyBot has logged in!" (from spec)
 - All 8 DB tables must be created: odds_snapshots, normalized_odds, arb_signals, ev_signals, parlays, parlay_legs, leg_type_weights, bot_config
 - PostgreSQL swap path must be documented as a clear comment block in db.py (not just a note in README)

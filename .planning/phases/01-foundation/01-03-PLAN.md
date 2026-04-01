@@ -22,7 +22,7 @@ requirements: [BOT-01, BOT-02, BOT-03, BOT-04, BOT-05, BOT-06, BOT-07, DEL-01, D
 
 must_haves:
   truths:
-    - "python bot.py boots, connects to Discord, sets status 'chewyBot is online 🐾', posts 'chewyBot has logged in!' to LOG_CHANNEL_ID"
+    - "python bot.py boots, connects to Discord, sets status 'chewyBot is online!', posts 'chewyBot has logged in!' to LOG_CHANNEL_ID"
     - "Introducing a syntax error in one cog file does not prevent the remaining 4 cogs from loading"
     - "No hardcoded token, guild ID, or any secret anywhere in the codebase — all come from config.py"
     - "requirements.txt, .env.example, README.md, mock/odds_api_sample.json, mock/balldontlie_sample.json all exist"
@@ -237,7 +237,7 @@ class ChewyBot(commands.Bot):
         """Called when bot has connected and is ready."""
         # Set bot status (BOT-03)
         await self.change_presence(
-            activity=discord.CustomActivity(name="chewyBot is online 🐾")
+            activity=discord.CustomActivity(name="chewyBot is online!")
         )
         logger.info("Logged in as %s (ID: %s)", self.user, self.user.id if self.user else "?")
         # Post ready message to log channel (BOT-03)
@@ -293,7 +293,7 @@ CRITICAL constraints:
     - `grep -c "setup_logging" bot.py` returns 1 (logging setup called)
     - `grep -c "load_extension" bot.py` returns 1 (cog loading in a loop)
     - `grep -c "exc_info=True" bot.py` returns at least 1 (error traceback logged for failed cogs)
-    - `grep -c "chewyBot is online 🐾" bot.py` returns 1 (status text set)
+    - `grep -c "chewyBot is online!" bot.py` returns 1 (status text set)
     - `grep -c "chewyBot has logged in!" bot.py` returns 1 (ready message present)
     - `grep -rn "DISCORD_TOKEN\s*=\s*['\"][A-Za-z0-9]" bot.py cogs/` returns empty (no hardcoded tokens)
     - `grep -c "2 \*\* attempt\|exponential" bot.py` returns at least 1 (exponential backoff)
@@ -617,7 +617,7 @@ print(f'Missing {len(missing)} files: {missing}' if missing else f'All {len(requ
 </verification>
 
 <success_criteria>
-- bot.py: boots ChewyBot, calls setup_logging + init_db in setup_hook, loads all 5 cogs with error isolation, syncs guild slash commands, sets "chewyBot is online 🐾" status, posts "chewyBot has logged in!" to LOG_CHANNEL_ID, retries Discord connection 3x with exponential backoff
+- bot.py: boots ChewyBot, calls setup_logging + init_db in setup_hook, loads all 5 cogs with error isolation, syncs guild slash commands, sets "chewyBot is online!" status, posts "chewyBot has logged in!" to LOG_CHANNEL_ID, retries Discord connection 3x with exponential backoff
 - cogs/: 5 stubs (music, tts, emoji, arb, parlay) each with setup(bot) coroutine and placeholder class
 - mock/odds_api_sample.json: valid JSON, 3 sports, all 4 books, 1 guaranteed arb (sum of reciprocals < 1.0)
 - mock/balldontlie_sample.json: valid JSON, 8-10 teams, last 5 games each, team_stats with home/away records
