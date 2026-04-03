@@ -38,6 +38,8 @@ from database.queries import (
     SELECT_PARLAY_WITH_LEGS,
     SELECT_PARLAY_BY_MESSAGE_ID,
     SELECT_PARLAY_LEGS,
+    SELECT_PARLAY_LEGS_ORDERED,
+    UPDATE_PARLAY_LEG_OUTCOME,
     SELECT_LEG_TYPE_WEIGHT,
     UPSERT_LEG_TYPE_WEIGHT_HIT,
     UPSERT_LEG_TYPE_WEIGHT_MISS,
@@ -51,6 +53,17 @@ logger = logging.getLogger(__name__)
 # Number emoji for per-leg reaction feedback (1️⃣ through 5️⃣)
 # Parlays are capped at 5 legs, so this list covers all valid cases.
 _NUMBER_EMOJIS: list[str] = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+
+# Maps Discord number keycap emoji name to 1-based leg index.
+# Discord sends keycap emoji with (U+FE0F variation selector) or without (U+20E3 only).
+# Both variants are included to handle both cases reliably.
+_LEG_EMOJI_MAP: dict[str, int] = {
+    "1️⃣": 1, "1\u20e3": 1,
+    "2️⃣": 2, "2\u20e3": 2,
+    "3️⃣": 3, "3\u20e3": 3,
+    "4️⃣": 4, "4\u20e3": 4,
+    "5️⃣": 5, "5\u20e3": 5,
+}
 
 # All 6 locked leg types from CONTEXT.md Decision A
 _ALL_LEG_TYPES: list[str] = [
@@ -349,76 +362,138 @@ class ParlayCog(commands.Cog, name="Parlay"):
         if payload.channel_id != config.PARLAY_CHANNEL_ID:
             return
 
-        # 3. Only ✅ and ❌ emoji (handle both unicode and name variants, PAR-14 / Pitfall 4)
+        # 3. Only ✅, ❌ or number keycap emoji (handle both unicode and name variants, PAR-14 / Pitfall 4)
         emoji_name = payload.emoji.name
         is_hit = emoji_name in ("✅", "white_check_mark")
         is_miss = emoji_name in ("❌", "x")
-        if not (is_hit or is_miss):
+        is_leg_emoji = emoji_name in _LEG_EMOJI_MAP
+        if not (is_hit or is_miss or is_leg_emoji):
             return
 
-        # 4. Look up parlay by message_id
-        async with get_db() as db:
-            cursor = await db.execute(SELECT_PARLAY_BY_MESSAGE_ID, (str(payload.message_id),))
-            row = await cursor.fetchone()
+        # Branch A: ✅/❌ whole-parlay outcome handler
+        if is_hit or is_miss:
+            # 4. Look up parlay by message_id
+            async with get_db() as db:
+                cursor = await db.execute(SELECT_PARLAY_BY_MESSAGE_ID, (str(payload.message_id),))
+                row = await cursor.fetchone()
 
-        if not row:
-            return  # Not a parlay message
+            if not row:
+                return  # Not a parlay message
 
-        parlay_id = row["id"]
-        generated_at_iso = row["generated_at"]
-        current_outcome = row["outcome"]
+            parlay_id = row["id"]
+            generated_at_iso = row["generated_at"]
+            current_outcome = row["outcome"]
 
-        # 5. First-reaction-wins: skip if already scored (PAR-14, Decision D)
-        # DB-authoritative — handles restarts correctly (no in-memory set needed)
-        if current_outcome != "pending":
+            # 5. First-reaction-wins: skip if already scored (PAR-14, Decision D)
+            # DB-authoritative — handles restarts correctly (no in-memory set needed)
+            if current_outcome != "pending":
+                return
+
+            # 6. Enforce 24-hour window (PAR-14, Decision D)
+            try:
+                generated_at = datetime.fromisoformat(generated_at_iso)
+                if generated_at.tzinfo is None:
+                    generated_at = generated_at.replace(tzinfo=timezone.utc)
+                if datetime.now(tz=timezone.utc) - generated_at > timedelta(hours=24):
+                    return  # Reaction too late
+            except (ValueError, TypeError):
+                logger.warning(f"ParlayCog: could not parse generated_at for parlay {parlay_id}")
+                return
+
+            # 7. Determine outcome
+            outcome = "hit" if is_hit else "miss"
+            delta = 1 if is_hit else -1
+
+            # 8. Update parlay outcome and leg_type_weights atomically (PAR-06, PAR-07)
+            async with get_db() as db:
+                # Mark parlay outcome first (prevents race condition on repeated rapid reactions)
+                await db.execute(UPDATE_PARLAY_OUTCOME, (outcome, parlay_id))
+
+                # Fetch legs for this parlay
+                cursor = await db.execute(SELECT_PARLAY_LEGS, (parlay_id,))
+                legs = await cursor.fetchall()
+
+                for leg in legs:
+                    leg_type = leg["leg_type"]
+
+                    # Get current weight
+                    w_cursor = await db.execute(SELECT_LEG_TYPE_WEIGHT, (leg_type,))
+                    w_row = await w_cursor.fetchone()
+                    old_weight = w_row["weight"] if w_row else 1.0
+
+                    # Calculate new weight (PAR-07): new = old + (LEARNING_RATE * delta)
+                    # Floor at 0.1 so weights never go to zero or negative
+                    new_weight = max(0.1, old_weight + (config.PARLAY_LEARNING_RATE * delta))
+
+                    # Upsert weight + increment appropriate counter
+                    if is_hit:
+                        await db.execute(UPSERT_LEG_TYPE_WEIGHT_HIT, (leg_type, new_weight))
+                    else:
+                        await db.execute(UPSERT_LEG_TYPE_WEIGHT_MISS, (leg_type, new_weight))
+
+            logger.info(
+                f"ParlayCog: parlay {parlay_id} marked {outcome.upper()} "
+                f"by {payload.member} — weights updated for {len(legs)} legs"
+            )
             return
 
-        # 6. Enforce 24-hour window (PAR-14, Decision D)
-        try:
-            generated_at = datetime.fromisoformat(generated_at_iso)
-            if generated_at.tzinfo is None:
-                generated_at = generated_at.replace(tzinfo=timezone.utc)
-            if datetime.now(tz=timezone.utc) - generated_at > timedelta(hours=24):
-                return  # Reaction too late
-        except (ValueError, TypeError):
-            logger.warning(f"ParlayCog: could not parse generated_at for parlay {parlay_id}")
-            return
+        # Branch B: Per-leg reaction — number emoji marks a specific leg as miss
+        if is_leg_emoji:
+            leg_index = _LEG_EMOJI_MAP[emoji_name]  # 1-based
 
-        # 7. Determine outcome
-        outcome = "hit" if is_hit else "miss"
-        delta = 1 if is_hit else -1
+            async with get_db() as db:
+                cursor = await db.execute(SELECT_PARLAY_BY_MESSAGE_ID, (str(payload.message_id),))
+                row = await cursor.fetchone()
 
-        # 8. Update parlay outcome and leg_type_weights atomically (PAR-06, PAR-07)
-        async with get_db() as db:
-            # Mark parlay outcome first (prevents race condition on repeated rapid reactions)
-            await db.execute(UPDATE_PARLAY_OUTCOME, (outcome, parlay_id))
+            if not row:
+                return
 
-            # Fetch legs for this parlay
-            cursor = await db.execute(SELECT_PARLAY_LEGS, (parlay_id,))
-            legs = await cursor.fetchall()
+            parlay_id = row["id"]
+            generated_at_iso = row["generated_at"]
 
-            for leg in legs:
-                leg_type = leg["leg_type"]
+            # Enforce 24-hour window (same logic as whole-parlay handler)
+            try:
+                generated_at = datetime.fromisoformat(generated_at_iso)
+                if generated_at.tzinfo is None:
+                    generated_at = generated_at.replace(tzinfo=timezone.utc)
+                if datetime.now(tz=timezone.utc) - generated_at > timedelta(hours=24):
+                    return
+            except (ValueError, TypeError):
+                logger.warning(f"ParlayCog: could not parse generated_at for parlay {parlay_id}")
+                return
 
-                # Get current weight
+            async with get_db() as db:
+                cursor = await db.execute(SELECT_PARLAY_LEGS_ORDERED, (parlay_id,))
+                legs = await cursor.fetchall()
+
+            if leg_index > len(legs):
+                return  # Reaction number exceeds this parlay's leg count
+
+            target_leg = legs[leg_index - 1]  # Convert 1-based index to 0-based
+
+            # Idempotency: skip if already scored (avoids double-counting weights)
+            if target_leg["outcome"] != "pending":
+                return
+
+            leg_id = target_leg["id"]
+            leg_type = target_leg["leg_type"]
+
+            async with get_db() as db:
+                # Mark this specific leg as miss
+                await db.execute(UPDATE_PARLAY_LEG_OUTCOME, ("miss", leg_id))
+
+                # Update leg_type_weight for this leg's type only
                 w_cursor = await db.execute(SELECT_LEG_TYPE_WEIGHT, (leg_type,))
                 w_row = await w_cursor.fetchone()
                 old_weight = w_row["weight"] if w_row else 1.0
+                new_weight = max(0.1, old_weight + (config.PARLAY_LEARNING_RATE * -1))
+                await db.execute(UPSERT_LEG_TYPE_WEIGHT_MISS, (leg_type, new_weight))
 
-                # Calculate new weight (PAR-07): new = old + (LEARNING_RATE * delta)
-                # Floor at 0.1 so weights never go to zero or negative
-                new_weight = max(0.1, old_weight + (config.PARLAY_LEARNING_RATE * delta))
-
-                # Upsert weight + increment appropriate counter
-                if is_hit:
-                    await db.execute(UPSERT_LEG_TYPE_WEIGHT_HIT, (leg_type, new_weight))
-                else:
-                    await db.execute(UPSERT_LEG_TYPE_WEIGHT_MISS, (leg_type, new_weight))
-
-        logger.info(
-            f"ParlayCog: parlay {parlay_id} marked {outcome.upper()} "
-            f"by {payload.member} — weights updated for {len(legs)} legs"
-        )
+            logger.info(
+                f"ParlayCog: parlay {parlay_id} leg {leg_index} ({leg_type}) marked miss "
+                f"by {payload.member} via {emoji_name} reaction"
+            )
+            return
 
 
 async def setup(bot: commands.Bot) -> None:
