@@ -48,6 +48,10 @@ from utils.formatters import build_parlay_embed
 
 logger = logging.getLogger(__name__)
 
+# Number emoji for per-leg reaction feedback (1️⃣ through 5️⃣)
+# Parlays are capped at 5 legs, so this list covers all valid cases.
+_NUMBER_EMOJIS: list[str] = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+
 # All 6 locked leg types from CONTEXT.md Decision A
 _ALL_LEG_TYPES: list[str] = [
     "h2h_favorite",
@@ -147,6 +151,10 @@ class ParlayCog(commands.Cog, name="Parlay"):
         post_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         embed = build_parlay_embed(parlay, post_date)
         msg = await channel.send(embed=embed)
+
+        # Add number reactions for per-leg feedback (one per leg, 1️⃣ through N️⃣)
+        for i in range(min(len(parlay.legs), 5)):
+            await msg.add_reaction(_NUMBER_EMOJIS[i])
 
         async with get_db() as db:
             # Insert the parlay row

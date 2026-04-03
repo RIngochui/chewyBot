@@ -138,6 +138,6 @@ def build_parlay_embed(parlay: Parlay, post_date: str) -> discord.Embed:
     embed.add_field(name="Combined Parlay Odds", value=combined_str, inline=True)
     embed.add_field(name="Confidence", value=f"{parlay.confidence_score:.0f}/100", inline=True)
 
-    embed.set_footer(text="React \u2705 if this parlay hits, \u274c if it misses \u2014 helps the AI learn!")
+    embed.set_footer(text="React \u2705 hit / \u274c miss \u2014 or 1\ufe0f\u20e3\u20135\ufe0f\u20e3 to mark which leg(s) failed!")
 
     return embed
