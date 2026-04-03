@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 Phase: 4
 Plan: 02 complete, 03 next
 Status: Executing
-Last activity: 2026-04-01 - Completed quick task 260401-jzn: Filter out stale and far-future events from arbitrage scanner
+Last activity: 2026-04-03 - Completed quick task 260403-ke6: Add per-leg reaction feedback to parlay builder
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -128,6 +128,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260401-jzn | Filter out stale and far-future events from arbitrage scanner | 2026-04-01 | 5150c6c | [260401-jzn-filter-out-stale-and-far-future-events-f](./quick/260401-jzn-filter-out-stale-and-far-future-events-f/) |
+| 260403-ke6 | Add per-leg reaction feedback to parlay builder | 2026-04-03 | 64a1bfb | [260403-ke6-add-per-leg-reaction-feedback-to-parlay-](./quick/260403-ke6-add-per-leg-reaction-feedback-to-parlay-/) |
 
 ## Session Continuity
 
