@@ -216,6 +216,14 @@ INSERT_PARLAY_LEG: str = """
     VALUES (?, ?, ?, ?, ?, ?, ?)
 """
 
+SELECT_PARLAY_LEGS_ORDERED: str = """
+    SELECT id, leg_type, leg_score, outcome FROM parlay_legs WHERE parlay_id = ? ORDER BY id ASC
+"""
+
+UPDATE_PARLAY_LEG_OUTCOME: str = """
+    UPDATE parlay_legs SET outcome = ? WHERE id = ?
+"""
+
 SELECT_PARLAY_BY_MESSAGE_ID: str = """
     SELECT id, generated_at, outcome FROM parlays WHERE discord_message_id = ?
 """
