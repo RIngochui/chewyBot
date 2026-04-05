@@ -9,6 +9,7 @@ chewyBot is a production-ready Python Discord bot for a single server. It delive
 - **Emoji Proxy** — Post custom emoji without Nitro. Add, remove, and list server emoji via slash commands with permission gating.
 - **Arbitrage Scanner** — Fetches live odds from FanDuel, DraftKings, BetMGM, and Bet365 via The Odds API. Detects arbitrage (sum of best odds < 1.0) and +EV opportunities. Auto-scans every 60 seconds and posts alerts to a dedicated channel.
 - **NBA Parlay AI** — Generates daily 3-5 leg NBA parlays using a 5-factor scoring model. Learns from Discord reaction feedback (✅/❌) to improve picks over time.
+- **Polls & Scheduling** — Create single or multi-choice polls with reaction-based voting. Schedule polls to post at a future time or set up recurring weekly polls. Supports vote-limit enforcement, results summary with percentage bars, and full CRUD management via slash commands.
 
 ## Prerequisites
 
@@ -140,6 +141,38 @@ Arb alert embeds are titled **"Possible Arbitrage"** and include sport, event, m
 | `/emoji list` | List all custom emoji |
 | `/emoji post <name>` | Post a custom emoji inline (Nitro-free) |
 
+### NBA Parlay AI
+
+| Command | Description |
+|---------|-------------|
+| `/parlay` | Manually generate and post today's NBA parlay |
+| `/parlay_stats` | Show AI performance stats (hit rate, best/worst leg types) |
+| `/parlay_history [n]` | Show the last n parlay results (default 5, max 10) |
+
+React ✅ or ❌ on any posted parlay to record a hit or miss. React with a number emoji (1️⃣–5️⃣) on a parlay to mark a specific leg as a miss. The AI updates its leg-type weights after each reaction.
+
+## Poll Commands
+
+All poll commands are subcommands of `/poll`. Vote-limit features (`max_choices`) require **Manage Guild** permission.
+
+| Command | Parameters | Description |
+|---------|------------|-------------|
+| `/poll create` | `question`, `options`, `duration`, `channel` (opt), `max_choices` (opt) | Post an immediate poll. `options` is comma-separated (2–9 choices). `duration` uses `Xm`/`Xh`/`Xd` (e.g. `2h`). `max_choices` limits how many options each user may pick — requires Manage Guild. |
+| `/poll schedule` | `question`, `options`, `post_at`, `close_at`, `channel` (opt), `max_choices` (opt), `repeat` (opt) | Schedule a poll to post at a future time. Supports `YYYY-MM-DD HH:MM` or natural language like `Friday 9:00am`. Set `repeat: weekly` to make it recurring. |
+| `/poll schedule_weekly` | `question`, `options`, `day`, `post_time`, `close_time`, `channel` (opt), `max_choices` (opt) | Create a recurring weekly poll. `day` is a full weekday name (e.g. `Monday`). `post_time` and `close_time` are `HH:MM` in UTC. |
+| `/poll results [poll_id]` | `poll_id` | Show live vote counts with percentage bars for any poll (open or closed). Response is ephemeral. |
+| `/poll close [poll_id]` | `poll_id` | Manually close a poll. Posts a results summary embed to the channel with winner(s) bolded. Requires Manage Guild. |
+| `/poll list` | — | List all active, scheduled, and recurring polls with their IDs, status, and timing. Response is ephemeral. |
+| `/poll cancel [poll_id]` | `poll_id` | Cancel a poll without posting results. If the poll belongs to a recurring series, the entire series is deactivated. Requires Manage Guild. |
+| `/poll edit_recurring [poll_id]` | `poll_id`, `question` (opt), `options` (opt), `day` (opt), `post_time` (opt), `close_time` (opt), `max_choices` (opt) | Update a recurring poll's schedule. Changes take effect on the next weekly occurrence. Requires Manage Guild. |
+
+**Notes:**
+- Polls support up to 9 options. Reactions 1️⃣–9️⃣ are used for voting.
+- `max_choices=1` acts as a radio button — selecting a new option automatically removes the old one.
+- `max_choices=N` (N > 1) allows up to N votes per user; exceeding this removes the reaction and sends a warning.
+- On bot restart, active polls automatically re-arm their close tasks. Missed weekly polls post immediately on the next restart.
+- Recurring polls automatically schedule the next weekly instance after each poll closes.
+
 ## How to Add a New Sportsbook
 
 chewyBot uses an adapter pattern to make adding new sportsbooks straightforward:
@@ -179,7 +212,8 @@ chewyBot/
 │   ├── tts.py                 # Text-to-speech (Phase 2)
 │   ├── emoji.py               # Emoji proxy (Phase 2)
 │   ├── arb.py                 # Arbitrage + EV scanner (Phase 3)
-│   └── parlay.py              # NBA parlay AI (Phase 4)
+│   ├── parlay.py              # NBA parlay AI (Phase 4)
+│   └── polls.py               # Polls & Scheduling (quick-260405-32a)
 ├── database/
 │   ├── db.py                  # Async connection manager, WAL mode, table init
 │   └── queries.py             # All SQL statements — zero inline SQL elsewhere
