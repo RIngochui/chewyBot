@@ -32,6 +32,7 @@ COGS: list[str] = [
     "cogs.emoji",
     "cogs.arb",
     "cogs.parlay",
+    "cogs.polls",
 ]
 
 

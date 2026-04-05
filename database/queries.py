@@ -135,6 +135,51 @@ CREATE_TABLES_SQL: list[str] = [
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """,
+
+    # --- Recurring weekly poll definitions (quick-260405-32a) ---
+    """
+    CREATE TABLE IF NOT EXISTS recurring_polls (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        question    TEXT NOT NULL,
+        options     TEXT NOT NULL,
+        channel_id  INTEGER NOT NULL,
+        max_choices INTEGER,
+        day_of_week TEXT NOT NULL,
+        post_time   TEXT NOT NULL,
+        close_time  TEXT NOT NULL,
+        active      INTEGER DEFAULT 1,
+        created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """,
+
+    # --- Active and completed poll instances (quick-260405-32a) ---
+    """
+    CREATE TABLE IF NOT EXISTS polls (
+        id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+        question            TEXT NOT NULL,
+        options             TEXT NOT NULL,
+        channel_id          INTEGER NOT NULL,
+        discord_message_id  TEXT,
+        max_choices         INTEGER,
+        post_at             TIMESTAMP,
+        close_at            TIMESTAMP NOT NULL,
+        closed              INTEGER DEFAULT 0,
+        recurring_poll_id   INTEGER REFERENCES recurring_polls(id),
+        created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """,
+
+    # --- Per-user vote tracking (quick-260405-32a) ---
+    """
+    CREATE TABLE IF NOT EXISTS poll_votes (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        poll_id     INTEGER NOT NULL REFERENCES polls(id),
+        user_id     TEXT NOT NULL,
+        option_idx  INTEGER NOT NULL,
+        voted_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(poll_id, user_id, option_idx)
+    )
+    """,
 ]
 
 # ------------------------------------------------------------------ #
@@ -302,4 +347,101 @@ SELECT_PARLAY_STATS: str = """
         SUM(CASE WHEN outcome = 'miss' THEN 1 ELSE 0 END) as total_misses
     FROM parlays
     WHERE outcome != 'pending'
+"""
+
+# ------------------------------------------------------------------ #
+# DML — Polls (quick-260405-32a)                                      #
+# ------------------------------------------------------------------ #
+
+INSERT_POLL: str = """
+    INSERT INTO polls (question, options, channel_id, max_choices, post_at, close_at, recurring_poll_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+"""
+
+UPDATE_POLL_MESSAGE_ID: str = """
+    UPDATE polls SET discord_message_id = ? WHERE id = ?
+"""
+
+SELECT_POLL_BY_ID: str = """
+    SELECT * FROM polls WHERE id = ?
+"""
+
+SELECT_POLL_BY_MESSAGE_ID: str = """
+    SELECT * FROM polls WHERE discord_message_id = ?
+"""
+
+SELECT_ACTIVE_POLLS: str = """
+    SELECT * FROM polls WHERE closed = 0 ORDER BY created_at ASC
+"""
+
+SELECT_SCHEDULED_POLLS: str = """
+    SELECT * FROM polls WHERE closed = 0 AND post_at IS NOT NULL ORDER BY post_at ASC
+"""
+
+SELECT_ALL_POLLS_FOR_LIST: str = """
+    SELECT p.*, r.day_of_week, r.post_time, r.close_time, r.active as recur_active
+    FROM polls p
+    LEFT JOIN recurring_polls r ON r.id = p.recurring_poll_id
+    WHERE p.closed = 0
+    ORDER BY p.created_at ASC
+"""
+
+CLOSE_POLL: str = """
+    UPDATE polls SET closed = 1 WHERE id = ?
+"""
+
+SELECT_VOTE_COUNT_BY_USER: str = """
+    SELECT COUNT(*) as cnt FROM poll_votes WHERE poll_id = ? AND user_id = ?
+"""
+
+SELECT_VOTES_BY_USER: str = """
+    SELECT option_idx FROM poll_votes WHERE poll_id = ? AND user_id = ? ORDER BY voted_at ASC
+"""
+
+INSERT_POLL_VOTE: str = """
+    INSERT OR IGNORE INTO poll_votes (poll_id, user_id, option_idx) VALUES (?, ?, ?)
+"""
+
+DELETE_POLL_VOTE: str = """
+    DELETE FROM poll_votes WHERE poll_id = ? AND user_id = ? AND option_idx = ?
+"""
+
+SELECT_VOTES_BY_POLL: str = """
+    SELECT option_idx, COUNT(*) as cnt FROM poll_votes WHERE poll_id = ? GROUP BY option_idx
+"""
+
+SELECT_DISTINCT_VOTERS: str = """
+    SELECT COUNT(DISTINCT user_id) as cnt FROM poll_votes WHERE poll_id = ?
+"""
+
+INSERT_RECURRING_POLL: str = """
+    INSERT INTO recurring_polls (question, options, channel_id, max_choices, day_of_week, post_time, close_time)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+"""
+
+SELECT_ACTIVE_RECURRING_POLLS: str = """
+    SELECT * FROM recurring_polls WHERE active = 1
+"""
+
+SELECT_RECURRING_POLL_BY_ID: str = """
+    SELECT * FROM recurring_polls WHERE id = ?
+"""
+
+DEACTIVATE_RECURRING_POLL: str = """
+    UPDATE recurring_polls SET active = 0 WHERE id = ?
+"""
+
+UPDATE_RECURRING_POLL: str = """
+    UPDATE recurring_polls
+    SET question = COALESCE(?, question),
+        options = COALESCE(?, options),
+        day_of_week = COALESCE(?, day_of_week),
+        post_time = COALESCE(?, post_time),
+        close_time = COALESCE(?, close_time),
+        max_choices = COALESCE(?, max_choices)
+    WHERE id = ?
+"""
+
+SELECT_OPEN_INSTANCE_FOR_RECURRING: str = """
+    SELECT * FROM polls WHERE recurring_poll_id = ? AND closed = 0 ORDER BY created_at DESC LIMIT 1
 """
