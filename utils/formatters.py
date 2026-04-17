@@ -138,6 +138,35 @@ def build_parlay_embed(parlay: Parlay, post_date: str) -> discord.Embed:
     embed.add_field(name="Combined Parlay Odds", value=combined_str, inline=True)
     embed.add_field(name="Confidence", value=f"{parlay.confidence_score:.0f}/100", inline=True)
 
-    embed.set_footer(text="React \u2705 hit / \u274c miss \u2014 or 1\ufe0f\u20e3\u20135\ufe0f\u20e3 to mark which leg(s) failed!")
+    embed.set_footer(text="Results will be checked automatically before tomorrow's parlay.")
 
+    return embed
+
+
+def build_parlay_result_embed(result: dict) -> discord.Embed:
+    """Build a Discord embed showing yesterday's parlay outcome.
+
+    result dict keys: parlay_id (int), game_date (str YYYY-MM-DD),
+    outcome (str: 'hit'|'miss'|'pending'),
+    legs (list of dicts: team, outcome, leg_type)
+    """
+    _outcome_emoji = {"hit": "✅", "miss": "❌", "pending": "⏳"}
+    overall_emoji = _outcome_emoji.get(result["outcome"], "?")
+    overall_label = result["outcome"].upper()
+
+    embed = discord.Embed(
+        title=f"Yesterday's Parlay — {result['game_date']}",
+        description=f"Overall: {overall_emoji} **{overall_label}**",
+        color=EMBED_COLOR,
+    )
+
+    for leg in result.get("legs", []):
+        leg_emoji = _outcome_emoji.get(leg["outcome"], "?")
+        embed.add_field(
+            name=f"{leg_emoji} {leg['team']}",
+            value=leg["leg_type"].replace("_", " ").title(),
+            inline=True,
+        )
+
+    embed.set_footer(text="Outcomes resolved automatically from game results.")
     return embed
