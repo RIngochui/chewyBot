@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import math
 import logging
+import zoneinfo
 from datetime import date, datetime, timezone
 from typing import Optional
 from functools import reduce
@@ -307,6 +308,22 @@ async def generate_parlay(
     finally:
         await odds_adapter.close()
 
+    # Filter to games playing TODAY in America/New_York timezone
+    try:
+        _et_tz = zoneinfo.ZoneInfo("America/New_York")
+        _today_et = datetime.now(tz=_et_tz).date()
+        odds_events = [
+            ev for ev in odds_events
+            if datetime.fromisoformat(
+                ev.get("commence_time", "").replace("Z", "+00:00")
+            ).astimezone(_et_tz).date() == _today_et
+        ]
+        logger.info(
+            "generate_parlay: %d odds events after same-day ET filter", len(odds_events)
+        )
+    except Exception as _exc:
+        logger.warning("generate_parlay: same-day filter failed, using all events: %s", _exc)
+
     # ------------------------------------------------------------------
     # Step 4: Fetch today's games and team season averages
     # ------------------------------------------------------------------
@@ -494,6 +511,231 @@ async def generate_parlay(
         confidence_score=confidence,
         generated_at=datetime.now(timezone.utc),
     )
+
+
+async def resolve_pending_parlays() -> list[dict]:
+    """Check stale pending parlays against actual game results and update outcomes.
+
+    Called by daily_parlay task before generating a new parlay.
+
+    Resolution logic:
+    - Fetches parlays with outcome='pending' AND generated_at < now-12h
+    - For each, derives game_date in ET from generated_at
+    - Fetches completed NBA games for that date via BallDontLieAdapter
+    - Matches each leg to a Final game using _name_matches()
+    - h2h: leg hits if the matched team won
+    - spreads: spread_home hits if home_score + line_value > away_score;
+               spread_away hits if away_score + line_value > home_score
+    - totals: team field is "X vs Y"; totals_over hits if total > line_value;
+              totals_under hits if total < line_value
+    - Only uses games with status == "Final"; skips unmatched legs
+    - If ALL legs resolved: marks parlay hit (all hit) or miss (any miss)
+    - Partial resolution (some legs unmatched/not Final): leaves pending
+    - Updates leg_type_weights on full resolution (same logic as reaction handler)
+
+    Returns list of result dicts for posting to Discord.
+    """
+    from database.queries import (
+        SELECT_PENDING_PARLAYS_STALE,
+        SELECT_PARLAY_LEGS_FULL,
+        SELECT_LEG_TYPE_WEIGHT,
+        UPSERT_LEG_TYPE_WEIGHT_HIT,
+        UPSERT_LEG_TYPE_WEIGHT_MISS,
+        UPDATE_PARLAY_OUTCOME,
+        UPDATE_PARLAY_LEG_OUTCOME,
+    )
+
+    results: list[dict] = []
+    et_tz = zoneinfo.ZoneInfo("America/New_York")
+
+    # Load stale pending parlays
+    stale_parlays: list[dict] = []
+    try:
+        async with get_db() as db:
+            cursor = await db.execute(SELECT_PENDING_PARLAYS_STALE)
+            rows = await cursor.fetchall()
+            stale_parlays = [dict(r) for r in rows]
+    except Exception as exc:
+        logger.warning("resolve_pending_parlays: failed to load stale parlays: %s", exc)
+        return results
+
+    if not stale_parlays:
+        return results
+
+    logger.info("resolve_pending_parlays: %d stale pending parlays to check", len(stale_parlays))
+
+    for parlay_row in stale_parlays:
+        parlay_id: int = parlay_row["id"]
+        generated_at_iso: str = parlay_row["generated_at"]
+
+        # Derive game_date in ET from generated_at
+        try:
+            generated_dt = datetime.fromisoformat(generated_at_iso)
+            if generated_dt.tzinfo is None:
+                generated_dt = generated_dt.replace(tzinfo=timezone.utc)
+            game_date: str = generated_dt.astimezone(et_tz).date().isoformat()
+        except (ValueError, TypeError) as exc:
+            logger.warning(
+                "resolve_pending_parlays: bad generated_at for parlay %d: %s", parlay_id, exc
+            )
+            continue
+
+        # Fetch completed games for that date
+        bdl = BallDontLieAdapter(mock_mode=config.MOCK_MODE, api_key=config.BALLDONTLIE_API_KEY)
+        try:
+            games = await bdl.get_games(dates=[game_date])
+        except Exception as exc:
+            logger.warning(
+                "resolve_pending_parlays: failed to fetch games for %s: %s", game_date, exc
+            )
+            games = []
+        finally:
+            await bdl.close()
+
+        # Only keep Final games
+        final_games = [g for g in games if g.get("status") == "Final"]
+
+        # Load parlay legs
+        try:
+            async with get_db() as db:
+                cursor = await db.execute(SELECT_PARLAY_LEGS_FULL, (parlay_id,))
+                leg_rows = await cursor.fetchall()
+                legs = [dict(r) for r in leg_rows]
+        except Exception as exc:
+            logger.warning(
+                "resolve_pending_parlays: failed to load legs for parlay %d: %s", parlay_id, exc
+            )
+            continue
+
+        # Resolve each leg
+        leg_results: list[dict] = []
+        all_resolved = True
+
+        for leg in legs:
+            team: str = leg["team"]
+            market_type: str = leg["market_type"]
+            line_value: float | None = leg["line_value"]
+            leg_type: str = leg["leg_type"]
+            leg_id: int = leg["id"]
+
+            matched_game: dict | None = None
+
+            if market_type == "totals":
+                # team field is "X vs Y" — match by either team name
+                for g in final_games:
+                    home_name = g.get("home_team", {}).get("full_name", "")
+                    away_name = g.get("visitor_team", {}).get("full_name", "")
+                    if _name_matches(home_name, team) or _name_matches(away_name, team):
+                        matched_game = g
+                        break
+                    # Also check if team string contains either team name
+                    if home_name and home_name.lower() in team.lower():
+                        matched_game = g
+                        break
+                    if away_name and away_name.lower() in team.lower():
+                        matched_game = g
+                        break
+            else:
+                # h2h or spreads: match by team name
+                for g in final_games:
+                    home_name = g.get("home_team", {}).get("full_name", "")
+                    away_name = g.get("visitor_team", {}).get("full_name", "")
+                    if _name_matches(team, home_name) or _name_matches(team, away_name):
+                        matched_game = g
+                        break
+
+            if matched_game is None:
+                # Game not found or not Final — leave this parlay pending
+                all_resolved = False
+                leg_results.append({"team": team, "outcome": "pending", "leg_type": leg_type})
+                continue
+
+            home_score: int = matched_game.get("home_team_score", 0) or 0
+            away_score: int = matched_game.get("visitor_team_score", 0) or 0
+            home_name = matched_game.get("home_team", {}).get("full_name", "")
+            team_is_home = _name_matches(team, home_name)
+
+            leg_hit: bool
+            if market_type == "h2h":
+                # hit if the selected team won
+                if team_is_home:
+                    leg_hit = home_score > away_score
+                else:
+                    leg_hit = away_score > home_score
+            elif market_type == "spreads":
+                lv = line_value if line_value is not None else 0.0
+                if leg_type == "spread_home":
+                    leg_hit = (home_score + lv) > away_score
+                else:  # spread_away
+                    leg_hit = (away_score + lv) > home_score
+            else:  # totals
+                total = home_score + away_score
+                lv = line_value if line_value is not None else 0.0
+                if leg_type == "totals_over":
+                    leg_hit = total > lv
+                else:  # totals_under
+                    leg_hit = total < lv
+
+            outcome_str = "hit" if leg_hit else "miss"
+            leg_results.append({"team": team, "outcome": outcome_str, "leg_type": leg_type, "id": leg_id})
+
+        if not all_resolved:
+            logger.info(
+                "resolve_pending_parlays: parlay %d not fully resolved — leaving pending",
+                parlay_id,
+            )
+            results.append({
+                "parlay_id": parlay_id,
+                "game_date": game_date,
+                "outcome": "pending",
+                "legs": leg_results,
+            })
+            continue
+
+        # All legs resolved — determine parlay outcome
+        parlay_hit = all(r["outcome"] == "hit" for r in leg_results)
+        parlay_outcome = "hit" if parlay_hit else "miss"
+        delta = 1 if parlay_hit else -1
+
+        # Update DB: leg outcomes, parlay outcome, leg_type_weights
+        try:
+            async with get_db() as db:
+                # Update each leg outcome
+                for r in leg_results:
+                    await db.execute(UPDATE_PARLAY_LEG_OUTCOME, (r["outcome"], r["id"]))
+
+                # Update parlay outcome
+                await db.execute(UPDATE_PARLAY_OUTCOME, (parlay_outcome, parlay_id))
+
+                # Update leg_type_weights (same formula as reaction handler)
+                for r in leg_results:
+                    lt = r["leg_type"]
+                    w_cursor = await db.execute(SELECT_LEG_TYPE_WEIGHT, (lt,))
+                    w_row = await w_cursor.fetchone()
+                    old_weight = float(w_row["weight"]) if w_row else 1.0
+                    new_weight = max(0.1, old_weight + (config.PARLAY_LEARNING_RATE * delta))
+                    if parlay_hit:
+                        await db.execute(UPSERT_LEG_TYPE_WEIGHT_HIT, (lt, new_weight))
+                    else:
+                        await db.execute(UPSERT_LEG_TYPE_WEIGHT_MISS, (lt, new_weight))
+        except Exception as exc:
+            logger.warning(
+                "resolve_pending_parlays: DB update failed for parlay %d: %s", parlay_id, exc
+            )
+            continue
+
+        logger.info(
+            "resolve_pending_parlays: parlay %d resolved as %s (game_date=%s)",
+            parlay_id, parlay_outcome, game_date,
+        )
+        results.append({
+            "parlay_id": parlay_id,
+            "game_date": game_date,
+            "outcome": parlay_outcome,
+            "legs": leg_results,
+        })
+
+    return results
 
 
 # ------------------------------------------------------------------ #
