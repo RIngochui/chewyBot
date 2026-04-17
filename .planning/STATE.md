@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 Phase: 4
 Plan: 02 complete, 03 next
 Status: Executing
-Last activity: 2026-04-03 - Completed quick task 260403-ke6: Add per-leg reaction feedback to parlay builder
+Last activity: 2026-04-17 - Completed quick task 260417-ey0: parlay same-day filter and auto-outcome check
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -130,6 +130,7 @@ None yet.
 | 260401-jzn | Filter out stale and far-future events from arbitrage scanner | 2026-04-01 | 5150c6c | [260401-jzn-filter-out-stale-and-far-future-events-f](./quick/260401-jzn-filter-out-stale-and-far-future-events-f/) |
 | 260403-ke6 | Add per-leg reaction feedback to parlay builder | 2026-04-03 | 64a1bfb | [260403-ke6-add-per-leg-reaction-feedback-to-parlay-](./quick/260403-ke6-add-per-leg-reaction-feedback-to-parlay-/) |
 | 260405-32a | Implement Polls & Scheduling cog for chewyBot | 2026-04-05 | b90a6cb | [260405-32a-implement-polls-scheduling-cog-for-chewy](./quick/260405-32a-implement-polls-scheduling-cog-for-chewy/) |
+| 260417-ey0 | parlay same-day filter and auto-outcome check | 2026-04-17 | e3449fb | [260417-ey0-parlay-same-day-filter-and-auto-outcome-](./quick/260417-ey0-parlay-same-day-filter-and-auto-outcome-/) |
 
 ## Session Continuity
 
