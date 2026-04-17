@@ -294,6 +294,17 @@ SELECT_PARLAY_COUNT: str = """
     SELECT COUNT(*) FROM parlays WHERE outcome != 'pending'
 """
 
+SELECT_PENDING_PARLAYS_STALE: str = """
+    SELECT id, generated_at FROM parlays
+    WHERE outcome = 'pending'
+      AND generated_at < datetime('now', '-12 hours')
+"""
+
+SELECT_PARLAY_LEGS_FULL: str = """
+    SELECT id, team, market_type, line_value, leg_type, outcome
+    FROM parlay_legs WHERE parlay_id = ?
+"""
+
 # ------------------------------------------------------------------ #
 # DML — Leg type weight persistence (Phase 4)                         #
 # ------------------------------------------------------------------ #
