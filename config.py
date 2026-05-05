@@ -25,7 +25,7 @@ class Config(BaseSettings):
     Optional fields have sensible defaults that can be overridden in .env.
     """
 
-    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 
     # ------------------------------------------------------------------ #
     # Required — no default; ValidationError raised if absent             #
