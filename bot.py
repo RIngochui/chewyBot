@@ -33,6 +33,7 @@ COGS: list[str] = [
     "cogs.arb",
     "cogs.parlay",
     "cogs.polls",
+    "cogs.tracker",
 ]
 
 

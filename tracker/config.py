@@ -26,7 +26,7 @@ class TrackerConfig(BaseSettings):
 
     TRACKER_DB_PATH: str = "data/tracker.db"
     TRACKER_TIMEZONE: str = "America/Toronto"
-    SERPAPI_KEY: str  # required — get a free key at serpapi.com
+    SERPAPI_KEY: Optional[str] = None  # required for polling — get a free key at serpapi.com
     TRACKER_POLL_INTERVAL_HOURS: float = 4.0  # how often the daemon polls all active routes
     TRACKER_DISCORD_WEBHOOK_URL: Optional[str] = None  # set to enable Discord alerts
 
