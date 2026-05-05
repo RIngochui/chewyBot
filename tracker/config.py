@@ -6,6 +6,8 @@ Uses extra='ignore' so this module is importable on machines where bot
 env vars (DISCORD_TOKEN, etc.) are absent or unset.
 """
 
+from typing import Optional
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -26,6 +28,7 @@ class TrackerConfig(BaseSettings):
     TRACKER_TIMEZONE: str = "America/Toronto"
     SERPAPI_KEY: str  # required — get a free key at serpapi.com
     TRACKER_POLL_INTERVAL_HOURS: float = 4.0  # how often the daemon polls all active routes
+    TRACKER_DISCORD_WEBHOOK_URL: Optional[str] = None  # set to enable Discord alerts
 
 
 config = TrackerConfig()

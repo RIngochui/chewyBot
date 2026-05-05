@@ -81,3 +81,15 @@ SELECT_RECENT_SNAPSHOTS: str = """
     ORDER BY timestamp DESC
     LIMIT ?
 """
+
+INSERT_ALERT_SENT: str = """
+    INSERT INTO alerts_sent (
+        route_id, trigger_price_cad, baseline_price_cad, trigger_reason, discord_message_id
+    ) VALUES (?, ?, ?, ?, ?)
+"""
+
+SELECT_RECENT_ALERT_FOR_ROUTE: str = """
+    SELECT id FROM alerts_sent
+    WHERE route_id = ? AND timestamp > datetime('now', '-24 hours')
+    LIMIT 1
+"""
