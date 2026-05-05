@@ -20,6 +20,7 @@ from tracker.db import init_db, get_db
 from tracker.models import Route
 from tracker.queries import (
     DELETE_ROUTE,
+    INSERT_PRICE_SNAPSHOT,
     INSERT_ROUTE,
     SELECT_ALL_ROUTES,
     SELECT_ROUTE_BY_ID,
@@ -324,3 +325,60 @@ def resume(route_id: int) -> None:
         conn.execute(UPDATE_ROUTE_ACTIVE, (1, route_id))
     click.echo(f"Resumed route #{route_id} ({route.origin}→{route.destination}).")
     logger.info("Resumed route #%d", route_id)
+
+
+# ── poll ───────────────────────────────────────────────────────────────────────
+
+@cli.command()
+@click.argument("route_id", type=int, metavar="ID")
+def poll(route_id: int) -> None:
+    """Fetch the current cheapest price for a route and save it."""
+    from tracker import serpapi_client
+
+    route = _fetch_route(route_id)
+    if not route.active:
+        click.echo(f"Route #{route_id} is paused. Use 'tracker resume {route_id}' first.")
+        return
+
+    dates = f"{route.depart_date}"
+    if route.return_date:
+        dates += f" → {route.return_date}"
+    click.echo(f"Polling route #{route_id}: {route.origin} → {route.destination} ({dates}) ...")
+
+    result = None
+    success = False
+    try:
+        result = serpapi_client.search(route)
+        success = True
+    except Exception as exc:
+        click.echo(f"Poll failed: {exc}", err=True)
+
+    with get_db() as conn:
+        cursor = conn.execute(
+            INSERT_PRICE_SNAPSHOT,
+            (
+                route_id,
+                result.price_cad if result else None,
+                result.price_cad if result else None,
+                "CAD",
+                result.carrier if result else None,
+                result.stops if result else None,
+                result.offer_json if result else None,
+                1 if success else 0,
+            ),
+        )
+        snapshot_id = cursor.lastrowid
+
+    if result:
+        stops_label = f"{result.stops} stop" + ("s" if result.stops != 1 else "")
+        click.echo(
+            f"Cheapest: CAD {result.price_cad:,.2f} via {result.carrier} ({stops_label})"
+        )
+        click.echo(f"Saved to price_snapshots (id={snapshot_id}).")
+        logger.info(
+            "Poll #%d: CAD %.2f via %s (%d stop(s))",
+            route_id, result.price_cad, result.carrier, result.stops,
+        )
+    else:
+        click.echo(f"No flights found. Saved failed snapshot (id={snapshot_id}).")
+        logger.warning("Poll #%d: no results or request failed", route_id)

@@ -65,3 +65,17 @@ SELECT_ROUTE_BY_ID: str = "SELECT * FROM routes WHERE id = ?"
 DELETE_ROUTE: str = "DELETE FROM routes WHERE id = ?"
 
 UPDATE_ROUTE_ACTIVE: str = "UPDATE routes SET active = ? WHERE id = ?"
+
+INSERT_PRICE_SNAPSHOT: str = """
+    INSERT INTO price_snapshots (
+        route_id, cheapest_price_cad, cheapest_price_original, original_currency,
+        carrier, stops, offer_json, poll_success
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+"""
+
+SELECT_RECENT_SNAPSHOTS: str = """
+    SELECT * FROM price_snapshots
+    WHERE route_id = ?
+    ORDER BY timestamp DESC
+    LIMIT ?
+"""
