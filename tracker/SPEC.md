@@ -31,12 +31,15 @@ These are intentionally separate in V1:
 
 ---
 
-## Session 2 — Amadeus API integration
+## Session 2 — Serpapi (Google Flights) integration
+
+**API change rationale:** Amadeus Self-Service decommissioned 2026-07-17.
+Kiwi Tequila self-service portal broken (magic link auth failing).
+Serpapi chosen: simple GET + API key, no OAuth, `requests` already installed.
 
 _Plan TBD. Will add:_
-- `AMADEUS_CLIENT_ID`, `AMADEUS_CLIENT_SECRET` to `TrackerConfig`
-- `tracker/amadeus.py` — OAuth2 token refresh + flight offers search
-- Token caching (in-memory, refresh before expiry)
+- `SERPAPI_KEY` to `TrackerConfig`
+- `tracker/serpapi_client.py` — Google Flights search, response parsing, price extraction
 - Exponential backoff (max 3 retries) on 5xx / rate-limit responses
 - Manual `python -m tracker poll <id>` command to test a single route
 
