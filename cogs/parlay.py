@@ -162,8 +162,7 @@ class ParlayCog(commands.Cog, name="Parlay"):
             )
             parlay_id = cursor.lastrowid
 
-            # Immediately record the Discord message_id so reaction handler
-            # can look up the parlay from the reaction event (Plan 04)
+            # Record the Discord message_id for history/stats lookups (PAR-05)
             await db.execute(UPDATE_PARLAY_MESSAGE_ID, (str(msg.id), parlay_id))
 
             # Insert each individual leg
