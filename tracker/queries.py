@@ -60,6 +60,8 @@ INSERT_ROUTE: str = """
 
 SELECT_ALL_ROUTES: str = "SELECT * FROM routes ORDER BY id"
 
+SELECT_ALL_ACTIVE_ROUTES: str = "SELECT * FROM routes WHERE active = 1 ORDER BY id"
+
 SELECT_ROUTE_BY_ID: str = "SELECT * FROM routes WHERE id = ?"
 
 DELETE_ROUTE: str = "DELETE FROM routes WHERE id = ?"

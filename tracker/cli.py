@@ -16,6 +16,7 @@ from typing import Optional
 
 import click
 
+from tracker.config import config
 from tracker.db import init_db, get_db
 from tracker.models import Route
 from tracker.queries import (
@@ -382,3 +383,20 @@ def poll(route_id: int) -> None:
     else:
         click.echo(f"No flights found. Saved failed snapshot (id={snapshot_id}).")
         logger.warning("Poll #%d: no results or request failed", route_id)
+
+
+# ── run ────────────────────────────────────────────────────────────────────────
+
+@cli.command()
+@click.option(
+    "--interval", default=None, type=float, metavar="HOURS",
+    help="Poll interval in hours. Overrides TRACKER_POLL_INTERVAL_HOURS.",
+)
+def run(interval: Optional[float]) -> None:
+    """Start the polling daemon — polls all active routes on a schedule."""
+    from tracker.scheduler import run_daemon
+    hours = interval if interval is not None else config.TRACKER_POLL_INTERVAL_HOURS
+    try:
+        run_daemon(hours)
+    except KeyboardInterrupt:
+        click.echo("\nTracker stopped.")
