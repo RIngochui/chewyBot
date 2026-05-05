@@ -193,6 +193,51 @@ chewyBot uses an adapter pattern to make adding new sportsbooks straightforward:
 
 The odds normalizer (`services/odds_normalizer.py`) converts any adapter's output to the canonical `NormalizedOdds` schema, so the arb detection logic never changes when you add a new book.
 
+## Flight Price Tracker
+
+The tracker is a standalone CLI tool that lives alongside the bot in the same virtualenv. It polls the Amadeus API (Session 2+) on a schedule, stores price history in `data/tracker.db`, and posts alerts to Discord via webhook (Session 4+). Route management is done from the command line — there are no slash commands.
+
+### Running the CLI
+
+```bash
+# From the project root with the virtualenv active:
+python -m tracker --help
+
+# Add a round-trip route with a CAD 900 alert threshold
+python -m tracker add YYZ LHR --depart 2026-09-01 --return 2026-09-15 --threshold 900
+
+# Add a one-way route (no --return flag)
+python -m tracker add YYZ CDG --depart 2026-10-01 --cabin BUSINESS
+
+# List all routes
+python -m tracker list
+
+# Show full details for route #1
+python -m tracker show 1
+
+# Pause / resume polling
+python -m tracker pause 1
+python -m tracker resume 1
+
+# Remove a route (prompts for confirmation)
+python -m tracker remove 1
+```
+
+### Tracker config (.env)
+
+| Variable | Default | Description |
+|---|---|---|
+| `TRACKER_DB_PATH` | `data/tracker.db` | Path to the tracker SQLite database |
+| `TRACKER_TIMEZONE` | `America/Toronto` | IANA timezone for date display |
+
+The following keys will be added in later sessions: `AMADEUS_CLIENT_ID`, `AMADEUS_CLIENT_SECRET`, `TRACKER_DISCORD_WEBHOOK_URL`.
+
+### Multi-session plan
+
+See [`tracker/SPEC.md`](tracker/SPEC.md) for the full roadmap: Session 2 (Amadeus API), Session 3 (scheduler + polling loop), Session 4 (Discord webhook alerts).
+
+---
+
 ## How to Swap SQLite for PostgreSQL
 
 See `database/db.py` for the exact two-line change required. The PostgreSQL swap comment block at the top of that file documents precisely which import and which connection call to update. All SQL is in `database/queries.py` — you will need to update parameter placeholders from `?` (SQLite) to `$1, $2, ...` (asyncpg) in that file as well.
@@ -232,9 +277,19 @@ chewyBot/
 │   ├── logger.py              # setup_logging() — file + Discord handlers
 │   ├── odds_math.py           # american_to_decimal, implied_probability, etc.
 │   └── formatters.py          # Discord embed builders for alerts
-└── mock/
-    ├── odds_api_sample.json   # Realistic odds sample with guaranteed arb opportunity
-    └── balldontlie_sample.json # NBA teams, recent games, and team stats
+├── mock/
+│   ├── odds_api_sample.json   # Realistic odds sample with guaranteed arb opportunity
+│   └── balldontlie_sample.json # NBA teams, recent games, and team stats
+├── tracker/                   # Flight price tracker (separate process, sync sqlite3)
+│   ├── __main__.py            # python -m tracker entry point
+│   ├── cli.py                 # Click CLI: add, list, show, remove, pause, resume
+│   ├── config.py              # TrackerConfig — tracker vars only, importable standalone
+│   ├── db.py                  # Sync sqlite3 layer against data/tracker.db
+│   ├── queries.py             # All tracker SQL — zero inline SQL elsewhere
+│   ├── models.py              # Route dataclass
+│   └── SPEC.md                # Multi-session roadmap (Sessions 1–4)
+├── data/                      # Tracker database (tracker.db gitignored, .gitkeep tracked)
+└── logs/                      # Rotating log files (*.log gitignored, .gitkeep tracked)
 ```
 
 ## License
